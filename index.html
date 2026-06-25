@@ -102,7 +102,6 @@
       width: 100%;
     }
 
-    /* Hamburguesa (mobile) */
     .menu-toggle {
       display: none;
       flex-direction: column;
@@ -487,72 +486,168 @@
       line-height: 1.65;
     }
 
-    /* ─── PRECIO ─── */
+    /* ─── PRECIO (ORIENTADO A SERVICIOS) ─── */
     .precio {
       background: var(--claro);
     }
-    .precio-box {
+
+    .precio-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.8rem;
+      margin-top: 3rem;
+    }
+
+    .precio-card {
       background: var(--blanco);
-      border-radius: 24px;
-      padding: 3rem;
-      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
-      max-width: 520px;
-      margin: 3rem auto 0;
+      border-radius: 20px;
+      padding: 2rem 1.8rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+      border-top: 5px solid var(--azul);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
       text-align: center;
-      border: 3px solid var(--naranja);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
     }
-    .precio-box:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 50px rgba(0, 0, 0, 0.14);
+    .precio-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 8px 35px rgba(0, 0, 0, 0.1);
     }
-    .precio-label {
-      font-size: 0.8rem;
+
+    .precio-card:nth-child(1) {
+      border-top-color: var(--naranja);
+    }
+    .precio-card:nth-child(2) {
+      border-top-color: var(--verde);
+    }
+    .precio-card:nth-child(3) {
+      border-top-color: var(--morado);
+    }
+    .precio-card:nth-child(4) {
+      border-top-color: #E74C3C;
+    }
+
+    .precio-card .card-tag {
+      display: inline-block;
+      font-size: 0.65rem;
       font-weight: 800;
-      color: var(--gris);
       letter-spacing: 1.5px;
       text-transform: uppercase;
+      color: var(--blanco);
+      background: var(--azul);
+      padding: 0.2rem 1.2rem;
+      border-radius: 20px;
+      margin-bottom: 0.8rem;
+      align-self: center;
     }
-    .precio-amount {
+    .precio-card:nth-child(1) .card-tag {
+      background: var(--naranja);
+      color: var(--oscuro);
+    }
+    .precio-card:nth-child(2) .card-tag {
+      background: var(--verde);
+    }
+    .precio-card:nth-child(3) .card-tag {
+      background: var(--morado);
+    }
+    .precio-card:nth-child(4) .card-tag {
+      background: #E74C3C;
+    }
+
+    .precio-card .price {
       font-family: 'Fredoka One', cursive;
-      font-size: 4.5rem;
-      color: var(--azul);
+      font-size: 2.8rem;
+      color: var(--oscuro);
       line-height: 1;
-      margin: 0.3rem 0 0;
+      margin: 0.2rem 0 0.1rem;
     }
-    .precio-period {
-      font-size: 1rem;
+    .precio-card .price small {
+      font-size: 1.1rem;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
       color: var(--gris);
-      font-weight: 600;
     }
-    .precio-divider {
-      border: none;
-      border-top: 1.5px solid #E2E8F0;
-      margin: 1.5rem 0;
+    .precio-card .price-sub {
+      font-size: 0.85rem;
+      color: var(--gris);
+      font-weight: 700;
+      margin-bottom: 0.5rem;
     }
-    .precio-list {
+
+    .precio-card .desc {
+      font-size: 0.92rem;
+      color: var(--gris);
+      line-height: 1.6;
+      margin: 0.5rem 0 1rem;
+      flex: 1;
+    }
+
+    .precio-card .feature-list {
       list-style: none;
       text-align: left;
+      margin: 0.5rem 0 1.2rem;
+      padding: 0;
     }
-    .precio-list li {
-      padding: 0.5rem 0;
-      font-size: 0.97rem;
+    .precio-card .feature-list li {
+      padding: 0.35rem 0;
+      font-size: 0.88rem;
       color: var(--oscuro);
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      gap: 0.5rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
     }
-    .precio-list li::before {
+    .precio-card .feature-list li:last-child {
+      border-bottom: none;
+    }
+    .precio-card .feature-list li::before {
       content: '✅';
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       flex-shrink: 0;
     }
-    .precio-nota {
-      margin-top: 1.2rem;
+
+    .precio-card .btn-small {
+      background: var(--azul);
+      color: var(--blanco);
+      font-weight: 800;
       font-size: 0.85rem;
-      color: var(--gris);
-      font-style: italic;
-      line-height: 1.5;
+      padding: 0.6rem 1.5rem;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: background 0.25s ease, transform 0.25s ease;
+      display: inline-block;
+      margin-top: auto;
+      border: none;
+      cursor: pointer;
+    }
+    .precio-card .btn-small:hover {
+      background: #155a8a;
+      transform: scale(1.03);
+    }
+    .precio-card:nth-child(1) .btn-small {
+      background: var(--naranja);
+      color: var(--oscuro);
+    }
+    .precio-card:nth-child(1) .btn-small:hover {
+      background: #d98c1a;
+    }
+    .precio-card:nth-child(2) .btn-small {
+      background: var(--verde);
+    }
+    .precio-card:nth-child(2) .btn-small:hover {
+      background: #1e8a4a;
+    }
+    .precio-card:nth-child(3) .btn-small {
+      background: var(--morado);
+    }
+    .precio-card:nth-child(3) .btn-small:hover {
+      background: #6c3483;
+    }
+    .precio-card:nth-child(4) .btn-small {
+      background: #E74C3C;
+    }
+    .precio-card:nth-child(4) .btn-small:hover {
+      background: #c0392b;
     }
 
     /* ─── COCREACION ─── */
@@ -782,11 +877,12 @@
       .hero-stats {
         gap: 1.5rem;
       }
-      .precio-box {
-        padding: 2rem 1.5rem;
+
+      .precio-card {
+        padding: 1.5rem;
       }
-      .precio-amount {
-        font-size: 3.5rem;
+      .precio-card .price {
+        font-size: 2.4rem;
       }
       .contact-card {
         min-width: 140px;
@@ -813,11 +909,11 @@
       section {
         padding: 3rem 1rem;
       }
-      .precio-box {
-        padding: 1.5rem 1rem;
-      }
-      .precio-amount {
-        font-size: 3rem;
+      .precio-grid {
+        grid-template-columns: 1fr;
+        max-width: 360px;
+        margin-left: auto;
+        margin-right: auto;
       }
       .btn-primary,
       .btn-secondary {
@@ -840,7 +936,7 @@
     <ul id="navMenu">
       <li><a href="#problema" data-nav>El Problema</a></li>
       <li><a href="#propuesta" data-nav>Nuestra Solución</a></li>
-      <li><a href="#precio" data-nav>Precio</a></li>
+      <li><a href="#precio" data-nav>Servicios</a></li>
       <li><a href="#contacto" data-nav>Contacto</a></li>
     </ul>
   </nav>
@@ -961,27 +1057,73 @@
     </div>
   </section>
 
-  <!-- ─── PRECIO ─── -->
+  <!-- ─── PRECIO (SERVICIOS) ─── -->
   <section class="precio" id="precio">
-    <div class="container" style="text-align:center;">
-      <p class="section-eyebrow reveal">Accesible para todas las familias</p>
-      <h2 class="section-title reveal">Solo <span>S/ 40</span> al mes</h2>
-      <p class="section-desc reveal" style="margin:0 auto;">Mucho menos de lo que gastas en recargas de internet o videojuegos — y con un impacto real en el desarrollo de tu hijo.</p>
-      <div class="precio-box reveal">
-        <div class="precio-label">Mensualidad familiar</div>
-        <div class="precio-amount">S/ 40</div>
-        <div class="precio-period">por niño · por mes</div>
-        <hr class="precio-divider">
-        <ul class="precio-list">
-          <li>Clases regulares de manualidades y arte</li>
-          <li>Taller de marionetas y títeres</li>
-          <li>Clases de música con instrumentos simples</li>
-          <li>Espacio social y comunitario seguro</li>
-          <li>Reporte mensual de avance del niño</li>
-          <li>Coordinación directa con docentes</li>
-        </ul>
-        <p class="precio-nota">El taller introductorio en el colegio es <strong>100% gratuito</strong>. Tu hijo prueba antes de inscribirse.</p>
-        <a href="https://wa.me/51931998513" class="btn-primary" style="display:inline-block; margin-top:1.5rem; text-decoration:none;">📲 Inscribir ahora por WhatsApp</a>
+    <div class="container">
+      <p class="section-eyebrow reveal">Elige el servicio ideal</p>
+      <h2 class="section-title reveal">Planes <span>para cada necesidad</span></h2>
+      <p class="section-desc reveal" style="margin:0 auto;">Desde la inscripción mensual hasta talleres especiales y alianzas con colegios.</p>
+
+      <div class="precio-grid">
+        <!-- 1. Mensualidad -->
+        <div class="precio-card reveal">
+          <span class="card-tag">Popular</span>
+          <div class="price">S/40 <small>/mes</small></div>
+          <div class="price-sub">por niño · clases semanales</div>
+          <p class="desc">Acceso a todas las actividades regulares de arte, música y manualidades en nuestro local.</p>
+          <ul class="feature-list">
+            <li>2 clases semanales (8/mes)</li>
+            <li>Materiales incluidos</li>
+            <li>Reporte de avance</li>
+            <li>Espacio seguro y supervisado</li>
+          </ul>
+          <a href="#contacto" class="btn-small">📲 Inscribir ahora</a>
+        </div>
+
+        <!-- 2. Kit para casa -->
+        <div class="precio-card reveal">
+          <span class="card-tag">Complemento</span>
+          <div class="price">S/12 <small>/kit</small></div>
+          <div class="price-sub">práctica en familia</div>
+          <p class="desc">Materiales y guía para que el niño siga creando en casa, sin necesidad de internet.</p>
+          <ul class="feature-list">
+            <li>Cartón, tela, pinturas</li>
+            <li>Guía con 10 actividades</li>
+            <li>Fomenta el tiempo en familia</li>
+            <li>Ideal para vacaciones</li>
+          </ul>
+          <a href="#contacto" class="btn-small">🛒 Adquirir kit</a>
+        </div>
+
+        <!-- 3. Taller intensivo -->
+        <div class="precio-card reveal">
+          <span class="card-tag">Especial</span>
+          <div class="price">S/80 <small>/taller</small></div>
+          <div class="price-sub">4 sesiones · una semana</div>
+          <p class="desc">Taller intensivo de marionetas y arte escénico. Ideal para colegios o grupos organizados.</p>
+          <ul class="feature-list">
+            <li>4 sesiones de 2 horas</li>
+            <li>Presentación final ante padres</li>
+            <li>Certificado de participación</li>
+            <li>Materiales y fotos incluidas</li>
+          </ul>
+          <a href="#contacto" class="btn-small">🎭 Contratar taller</a>
+        </div>
+
+        <!-- 4. Alianza con colegios -->
+        <div class="precio-card reveal">
+          <span class="card-tag">Institucional</span>
+          <div class="price">S/500 <small>/mes</small></div>
+          <div class="price-sub">hasta 25 niños</div>
+          <p class="desc">Programa completo para colegios o municipalidades con impacto social medible.</p>
+          <ul class="feature-list">
+            <li>Talleres en el colegio</li>
+            <li>Capacitación docente</li>
+            <li>Reportes de impacto</li>
+            <li>Materiales incluidos</li>
+          </ul>
+          <a href="#contacto" class="btn-small">🤝 Solicitar alianza</a>
+        </div>
       </div>
     </div>
   </section>
@@ -1079,7 +1221,6 @@
     (function() {
       'use strict';
 
-      // ── MENU HAMBURGUESA ──
       const menuToggle = document.getElementById('menuToggle');
       const navMenu = document.getElementById('navMenu');
 
@@ -1091,7 +1232,6 @@
 
       menuToggle.addEventListener('click', toggleMenu);
 
-      // Cerrar menú al hacer click en un enlace
       document.querySelectorAll('[data-nav]').forEach(link => {
         link.addEventListener('click', function() {
           if (navMenu.classList.contains('open')) {
@@ -1102,13 +1242,10 @@
         });
       });
 
-      // ── SCROLL REVEAL (Intersection Observer) ──
       const reveals = document.querySelectorAll('.reveal');
-
       const revealObserver = new IntersectionObserver((entries) => {
         entries.forEach((entry, index) => {
           if (entry.isIntersecting) {
-            // Pequeño retraso escalonado para efecto cascada
             const delay = index * 80;
             setTimeout(() => {
               entry.target.classList.add('visible');
@@ -1120,13 +1257,9 @@
         threshold: 0.1,
         rootMargin: '0px 0px -20px 0px'
       });
-
       reveals.forEach(el => revealObserver.observe(el));
 
-      // ── NAVBAR SCROLL EFFECT ──
       const nav = document.getElementById('navbar');
-      let lastScroll = 0;
-
       window.addEventListener('scroll', function() {
         const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
         if (currentScroll > 80) {
@@ -1136,10 +1269,8 @@
           nav.style.background = 'rgba(192, 66, 122, 0.97)';
           nav.style.boxShadow = '0 2px 16px rgba(0,0,0,0.15)';
         }
-        lastScroll = currentScroll;
       });
 
-      // ── CERRAR MENÚ AL HACER CLICK FUERA ──
       document.addEventListener('click', function(event) {
         const isClickInside = nav.contains(event.target);
         if (!isClickInside && navMenu.classList.contains('open')) {
@@ -1149,7 +1280,6 @@
         }
       });
 
-      // ── PREVENIR QUE EL HERO BADGE INTERRUMPA ANIMACIONES ──
       console.log('🚀 Yachayniyoq — Listo para inspirar sonrisas');
     })();
   </script>
