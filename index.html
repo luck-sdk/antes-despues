@@ -1,1288 +1,710 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Yachayniyoq — Marionetas, Arte y Música para Niños</title>
-  <style>
-    /* ─── RESET & BASE ─── */
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analizador de Alcohol en Aire · Sistema BAC</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
 
-    :root {
-      --azul: #1B6CA8;
-      --naranja: #F4A020;
-      --verde: #27AE60;
-      --rojo: #E74C3C;
-      --morado: #8E44AD;
-      --oscuro: #1A2B3C;
-      --claro: #F0F6FF;
-      --blanco: #FFFFFF;
-      --gris: #64748B;
-      --nav-height: 68px;
-    }
+        body {
+            background: #f1f5f9;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+        }
 
-    html {
-      scroll-behavior: smooth;
-    }
+        /* ===== TARJETA PRINCIPAL ===== */
+        .dashboard {
+            max-width: 1200px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 32px 36px 28px;
+            box-shadow: 0 20px 60px -12px rgba(0, 20, 40, 0.25);
+            border: 1px solid #e9edf2;
+            transition: all 0.2s ease;
+        }
 
-    body {
-      font-family: 'Nunito', 'Segoe UI', system-ui, sans-serif;
-      background: var(--blanco);
-      color: var(--oscuro);
-      overflow-x: hidden;
-      padding-top: var(--nav-height);
-    }
+        /* ===== ENCABEZADO ===== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+            padding-bottom: 18px;
+            border-bottom: 2px solid #eef2f6;
+        }
 
-    /* ─── FUENTES ─── */
-    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
 
-    /* ─── NAV ─── */
-    nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      z-index: 1000;
-      background: rgba(192, 66, 122, 0.97);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.5rem 2rem;
-      height: var(--nav-height);
-      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
-      transition: background 0.3s ease;
-    }
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: #0b2b44;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            letter-spacing: -0.5px;
+        }
 
-    .nav-logo {
-      font-family: 'Fredoka One', cursive;
-      font-size: 1.5rem;
-      color: var(--blanco);
-      letter-spacing: 0.5px;
-    }
-    .nav-logo span {
-      color: var(--naranja);
-    }
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #0b2b44;
+            letter-spacing: -0.3px;
+        }
 
-    nav ul {
-      list-style: none;
-      display: flex;
-      gap: 1.8rem;
-      align-items: center;
-    }
-    nav ul a {
-      color: rgba(255, 255, 255, 0.88);
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 0.9rem;
-      transition: color 0.2s ease, transform 0.2s ease;
-      position: relative;
-    }
-    nav ul a::after {
-      content: '';
-      position: absolute;
-      bottom: -4px;
-      left: 0;
-      width: 0%;
-      height: 2px;
-      background: var(--naranja);
-      transition: width 0.3s ease;
-    }
-    nav ul a:hover {
-      color: var(--naranja);
-    }
-    nav ul a:hover::after {
-      width: 100%;
-    }
+        .header h1 span {
+            font-weight: 300;
+            color: #4a6f8c;
+            font-size: 1rem;
+            margin-left: 8px;
+        }
 
-    .menu-toggle {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      padding: 5px;
-    }
-    .menu-toggle span {
-      width: 28px;
-      height: 3px;
-      background: var(--blanco);
-      border-radius: 4px;
-      transition: 0.3s ease;
-      display: block;
-    }
-    .menu-toggle.active span:nth-child(1) {
-      transform: rotate(45deg) translate(5px, 6px);
-    }
-    .menu-toggle.active span:nth-child(2) {
-      opacity: 0;
-    }
-    .menu-toggle.active span:nth-child(3) {
-      transform: rotate(-45deg) translate(5px, -6px);
-    }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
 
-    /* ─── HERO ─── */
-    .hero {
-      min-height: calc(100vh - var(--nav-height));
-      background: linear-gradient(135deg, #c0427a 0%, #e8609a 50%, #f48fb1 100%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 2rem 1.5rem 4rem;
-      position: relative;
-      overflow: hidden;
-    }
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='10'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-      pointer-events: none;
-    }
-    .hero-badge {
-      background: rgba(244, 160, 32, 0.2);
-      border: 1.5px solid var(--naranja);
-      color: var(--naranja);
-      font-size: 0.8rem;
-      font-weight: 800;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      padding: 0.35rem 1.2rem;
-      border-radius: 40px;
-      margin-bottom: 1.5rem;
-      display: inline-block;
-      backdrop-filter: blur(4px);
-    }
-    .hero h1 {
-      font-family: 'Fredoka One', cursive;
-      font-size: clamp(2.8rem, 8vw, 5.2rem);
-      color: var(--blanco);
-      line-height: 1.05;
-      margin-bottom: 0.5rem;
-      animation: fadeUp 0.8s ease forwards;
-    }
-    .hero h1 span {
-      color: var(--naranja);
-    }
-    .hero-sub {
-      font-size: clamp(1rem, 2.5vw, 1.4rem);
-      color: rgba(255, 255, 255, 0.85);
-      max-width: 620px;
-      margin: 0 auto 0.5rem;
-      font-weight: 600;
-      line-height: 1.5;
-      animation: fadeUp 0.8s ease 0.1s forwards;
-      opacity: 0;
-    }
-    .hero-tagline {
-      font-size: 1rem;
-      color: rgba(255, 255, 255, 0.6);
-      font-style: italic;
-      margin-bottom: 2.5rem;
-      animation: fadeUp 0.8s ease 0.2s forwards;
-      opacity: 0;
-    }
-    .hero-btns {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      justify-content: center;
-      animation: fadeUp 0.8s ease 0.3s forwards;
-      opacity: 0;
-    }
-    .btn-primary {
-      background: var(--naranja);
-      color: var(--oscuro);
-      font-weight: 800;
-      font-size: 1rem;
-      padding: 0.85rem 2.2rem;
-      border-radius: 50px;
-      text-decoration: none;
-      transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
-      box-shadow: 0 4px 20px rgba(244, 160, 32, 0.4);
-      display: inline-block;
-      border: none;
-      cursor: pointer;
-    }
-    .btn-primary:hover {
-      transform: translateY(-3px) scale(1.02);
-      box-shadow: 0 8px 32px rgba(244, 160, 32, 0.55);
-      background: #e6951a;
-    }
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.1);
-      color: var(--blanco);
-      font-weight: 700;
-      font-size: 1rem;
-      padding: 0.85rem 2.2rem;
-      border-radius: 50px;
-      text-decoration: none;
-      border: 2px solid rgba(255, 255, 255, 0.35);
-      transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
-      display: inline-block;
-      backdrop-filter: blur(4px);
-    }
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.2);
-      border-color: rgba(255, 255, 255, 0.6);
-      transform: translateY(-2px);
-    }
+        .api-status {
+            font-size: 0.8rem;
+            background: #eef2f6;
+            padding: 6px 16px;
+            border-radius: 30px;
+            color: #1f4a6b;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
 
-    .hero-stats {
-      display: flex;
-      gap: 2.5rem;
-      margin-top: 3rem;
-      flex-wrap: wrap;
-      justify-content: center;
-      animation: fadeUp 0.8s ease 0.4s forwards;
-      opacity: 0;
-    }
-    .stat {
-      text-align: center;
-    }
-    .stat-num {
-      font-family: 'Fredoka One', cursive;
-      font-size: 2.2rem;
-      color: var(--naranja);
-      line-height: 1;
-    }
-    .stat-label {
-      font-size: 0.8rem;
-      color: rgba(255, 255, 255, 0.65);
-      font-weight: 600;
-      margin-top: 0.2rem;
-    }
+        .api-status .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
 
-    @keyframes fadeUp {
-      0% {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+        .api-status .dot.success { background: #1f8b4c; }
+        .api-status .dot.loading { background: #d4a02b; }
+        .api-status .dot.error { background: #c73a3a; }
+        .api-status .dot.info { background: #2a7bb0; }
 
-    /* ─── SECTIONS ─── */
-    section {
-      padding: 4.5rem 1.5rem;
-    }
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    .section-eyebrow {
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      font-size: 0.75rem;
-      font-weight: 800;
-      color: var(--azul);
-      margin-bottom: 0.6rem;
-    }
-    .section-title {
-      font-family: 'Fredoka One', cursive;
-      font-size: clamp(1.8rem, 4vw, 2.8rem);
-      color: var(--oscuro);
-      margin-bottom: 1rem;
-      line-height: 1.15;
-    }
-    .section-title span {
-      color: var(--azul);
-    }
-    .section-desc {
-      font-size: 1.05rem;
-      color: var(--gris);
-      max-width: 600px;
-      line-height: 1.7;
-    }
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f1f5f9;
+            padding: 6px 16px 6px 12px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            color: #1f3f5a;
+            font-weight: 500;
+        }
 
-    /* ─── PROBLEMA ─── */
-    .problema {
-      background: var(--claro);
-    }
-    .problema-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.5rem;
-      margin-top: 3rem;
-    }
-    .ods-card {
-      background: var(--blanco);
-      border-radius: 16px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
-      border-top: 4px solid var(--azul);
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
-    .ods-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-    }
-    .ods-card:nth-child(1) {
-      border-top-color: #27AE60;
-    }
-    .ods-card:nth-child(2) {
-      border-top-color: #E74C3C;
-    }
-    .ods-card:nth-child(3) {
-      border-top-color: #E67E22;
-    }
-    .ods-card:nth-child(4) {
-      border-top-color: #2980B9;
-    }
-    .ods-num {
-      font-family: 'Fredoka One', cursive;
-      font-size: 0.85rem;
-      font-weight: 800;
-      letter-spacing: 1px;
-      margin-bottom: 0.4rem;
-    }
-    .ods-card:nth-child(1) .ods-num {
-      color: #27AE60;
-    }
-    .ods-card:nth-child(2) .ods-num {
-      color: #E74C3C;
-    }
-    .ods-card:nth-child(3) .ods-num {
-      color: #E67E22;
-    }
-    .ods-card:nth-child(4) .ods-num {
-      color: #2980B9;
-    }
-    .ods-card h3 {
-      font-size: 1rem;
-      font-weight: 800;
-      margin-bottom: 0.5rem;
-    }
-    .ods-card p {
-      font-size: 0.9rem;
-      color: var(--gris);
-      line-height: 1.6;
-    }
+        .user-badge .number {
+            font-weight: 700;
+            color: #0b2b44;
+            font-size: 1.1rem;
+        }
 
-    /* ─── INSIGHTS ─── */
-    .insights-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-      margin-top: 3rem;
-    }
-    .insight-card {
-      border-radius: 16px;
-      padding: 2rem;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
-    .insight-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
-    }
-    .insight-card:nth-child(1) {
-      background: #EBF5FB;
-      border-left: 5px solid var(--azul);
-    }
-    .insight-card:nth-child(2) {
-      background: #FEF9E7;
-      border-left: 5px solid var(--naranja);
-    }
-    .insight-card:nth-child(3) {
-      background: #EAFAF1;
-      border-left: 5px solid var(--verde);
-    }
-    .insight-tag {
-      font-size: 0.72rem;
-      font-weight: 800;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin-bottom: 0.5rem;
-    }
-    .insight-card:nth-child(1) .insight-tag {
-      color: var(--azul);
-    }
-    .insight-card:nth-child(2) .insight-tag {
-      color: var(--naranja);
-    }
-    .insight-card:nth-child(3) .insight-tag {
-      color: var(--verde);
-    }
-    .insight-card h3 {
-      font-size: 1.1rem;
-      font-weight: 800;
-      margin-bottom: 0.7rem;
-      line-height: 1.3;
-    }
-    .insight-card p {
-      font-size: 0.92rem;
-      color: var(--gris);
-      line-height: 1.65;
-    }
-    .insight-person {
-      margin-top: 1rem;
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--gris);
-      font-style: italic;
-    }
+        /* ===== ÁREA DE ENTRADA ===== */
+        .input-section {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            gap: 16px 20px;
+            background: #f8fafc;
+            padding: 20px 24px;
+            border-radius: 16px;
+            margin-bottom: 32px;
+            border: 1px solid #e2e8f0;
+        }
 
-    /* ─── PROPUESTA ─── */
-    .propuesta {
-      background: var(--oscuro);
-      color: var(--blanco);
-    }
-    .propuesta .section-title {
-      color: var(--blanco);
-    }
-    .propuesta .section-title span {
-      color: var(--naranja);
-    }
-    .propuesta .section-eyebrow {
-      color: var(--naranja);
-    }
-    .propuesta .section-desc {
-      color: rgba(255, 255, 255, 0.7);
-    }
-    .fases {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-      margin-top: 3rem;
-    }
-    .fase-card {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1.5px solid rgba(255, 255, 255, 0.12);
-      border-radius: 20px;
-      padding: 2rem;
-      transition: background 0.25s ease, transform 0.25s ease;
-    }
-    .fase-card:hover {
-      background: rgba(255, 255, 255, 0.1);
-      transform: translateY(-4px);
-    }
-    .fase-icon {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-    .fase-card h3 {
-      font-family: 'Fredoka One', cursive;
-      font-size: 1.2rem;
-      color: var(--naranja);
-      margin-bottom: 0.6rem;
-    }
-    .fase-card p {
-      font-size: 0.95rem;
-      color: rgba(255, 255, 255, 0.72);
-      line-height: 1.65;
-    }
+        .input-group {
+            flex: 2 1 220px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
 
-    /* ─── PRECIO (ORIENTADO A SERVICIOS) ─── */
-    .precio {
-      background: var(--claro);
-    }
+        .input-group label {
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: #2c4b66;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
 
-    .precio-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1.8rem;
-      margin-top: 3rem;
-    }
+        .input-group input {
+            background: white;
+            border: 1px solid #d5dee8;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #0a263b;
+            transition: 0.2s;
+            width: 100%;
+        }
 
-    .precio-card {
-      background: var(--blanco);
-      border-radius: 20px;
-      padding: 2rem 1.8rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
-      border-top: 5px solid var(--azul);
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-    }
-    .precio-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 8px 35px rgba(0, 0, 0, 0.1);
-    }
+        .input-group input:focus {
+            outline: none;
+            border-color: #1d5b85;
+            box-shadow: 0 0 0 3px rgba(29, 91, 133, 0.15);
+        }
 
-    .precio-card:nth-child(1) {
-      border-top-color: var(--naranja);
-    }
-    .precio-card:nth-child(2) {
-      border-top-color: var(--verde);
-    }
-    .precio-card:nth-child(3) {
-      border-top-color: var(--morado);
-    }
-    .precio-card:nth-child(4) {
-      border-top-color: #E74C3C;
-    }
+        .input-group .hint {
+            font-size: 0.7rem;
+            color: #6a7f94;
+            margin-top: 2px;
+        }
 
-    .precio-card .card-tag {
-      display: inline-block;
-      font-size: 0.65rem;
-      font-weight: 800;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--blanco);
-      background: var(--azul);
-      padding: 0.2rem 1.2rem;
-      border-radius: 20px;
-      margin-bottom: 0.8rem;
-      align-self: center;
-    }
-    .precio-card:nth-child(1) .card-tag {
-      background: var(--naranja);
-      color: var(--oscuro);
-    }
-    .precio-card:nth-child(2) .card-tag {
-      background: var(--verde);
-    }
-    .precio-card:nth-child(3) .card-tag {
-      background: var(--morado);
-    }
-    .precio-card:nth-child(4) .card-tag {
-      background: #E74C3C;
-    }
+        .btn-group {
+            display: flex;
+            flex: 1 0 auto;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
 
-    .precio-card .price {
-      font-family: 'Fredoka One', cursive;
-      font-size: 2.8rem;
-      color: var(--oscuro);
-      line-height: 1;
-      margin: 0.2rem 0 0.1rem;
-    }
-    .precio-card .price small {
-      font-size: 1.1rem;
-      font-family: 'Nunito', sans-serif;
-      font-weight: 700;
-      color: var(--gris);
-    }
-    .precio-card .price-sub {
-      font-size: 0.85rem;
-      color: var(--gris);
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
+        .btn {
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex: 1 0 auto;
+            white-space: nowrap;
+        }
 
-    .precio-card .desc {
-      font-size: 0.92rem;
-      color: var(--gris);
-      line-height: 1.6;
-      margin: 0.5rem 0 1rem;
-      flex: 1;
-    }
+        .btn-primary {
+            background: #1d5b85;
+            color: white;
+            box-shadow: 0 4px 12px rgba(29, 91, 133, 0.25);
+        }
+        .btn-primary:hover {
+            background: #134a70;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(29, 91, 133, 0.3);
+        }
 
-    .precio-card .feature-list {
-      list-style: none;
-      text-align: left;
-      margin: 0.5rem 0 1.2rem;
-      padding: 0;
-    }
-    .precio-card .feature-list li {
-      padding: 0.35rem 0;
-      font-size: 0.88rem;
-      color: var(--oscuro);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-    }
-    .precio-card .feature-list li:last-child {
-      border-bottom: none;
-    }
-    .precio-card .feature-list li::before {
-      content: '✅';
-      font-size: 0.8rem;
-      flex-shrink: 0;
-    }
+        .btn-secondary {
+            background: #e8edf3;
+            color: #1f405a;
+        }
+        .btn-secondary:hover {
+            background: #d5dde8;
+        }
 
-    .precio-card .btn-small {
-      background: var(--azul);
-      color: var(--blanco);
-      font-weight: 800;
-      font-size: 0.85rem;
-      padding: 0.6rem 1.5rem;
-      border-radius: 50px;
-      text-decoration: none;
-      transition: background 0.25s ease, transform 0.25s ease;
-      display: inline-block;
-      margin-top: auto;
-      border: none;
-      cursor: pointer;
-    }
-    .precio-card .btn-small:hover {
-      background: #155a8a;
-      transform: scale(1.03);
-    }
-    .precio-card:nth-child(1) .btn-small {
-      background: var(--naranja);
-      color: var(--oscuro);
-    }
-    .precio-card:nth-child(1) .btn-small:hover {
-      background: #d98c1a;
-    }
-    .precio-card:nth-child(2) .btn-small {
-      background: var(--verde);
-    }
-    .precio-card:nth-child(2) .btn-small:hover {
-      background: #1e8a4a;
-    }
-    .precio-card:nth-child(3) .btn-small {
-      background: var(--morado);
-    }
-    .precio-card:nth-child(3) .btn-small:hover {
-      background: #6c3483;
-    }
-    .precio-card:nth-child(4) .btn-small {
-      background: #E74C3C;
-    }
-    .precio-card:nth-child(4) .btn-small:hover {
-      background: #c0392b;
-    }
+        .btn-outline {
+            background: transparent;
+            color: #2c4b66;
+            border: 1px solid #cbd7e5;
+        }
+        .btn-outline:hover {
+            background: #f1f5f9;
+            border-color: #a0b4c9;
+        }
 
-    /* ─── COCREACION ─── */
-    .cocreacion {
-      background: var(--blanco);
-    }
-    .pasos {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.5rem;
-      margin-top: 3rem;
-    }
-    .paso {
-      text-align: center;
-      padding: 2rem 1.5rem;
-      border-radius: 16px;
-      background: var(--claro);
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
-    .paso:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-    }
-    .paso-num {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Fredoka One', cursive;
-      font-size: 1.4rem;
-      color: var(--blanco);
-      margin: 0 auto 1rem;
-    }
-    .paso:nth-child(1) .paso-num {
-      background: var(--azul);
-    }
-    .paso:nth-child(2) .paso-num {
-      background: var(--naranja);
-    }
-    .paso:nth-child(3) .paso-num {
-      background: var(--morado);
-    }
-    .paso:nth-child(4) .paso-num {
-      background: var(--verde);
-    }
-    .paso h3 {
-      font-size: 1rem;
-      font-weight: 800;
-      margin-bottom: 0.5rem;
-    }
-    .paso p {
-      font-size: 0.88rem;
-      color: var(--gris);
-      line-height: 1.6;
-    }
+        /* ===== ESTADÍSTICAS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
 
-    /* ─── TESTIMONIOS ─── */
-    .testimonios {
-      background: var(--azul);
-    }
-    .testimonios .section-title {
-      color: var(--blanco);
-    }
-    .testimonios .section-eyebrow {
-      color: var(--naranja);
-    }
-    .test-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-      margin-top: 3rem;
-    }
-    .test-card {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      padding: 1.8rem;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(4px);
-      transition: transform 0.25s ease, background 0.25s ease;
-    }
-    .test-card:hover {
-      transform: translateY(-4px);
-      background: rgba(255, 255, 255, 0.15);
-    }
-    .test-quote {
-      font-size: 1rem;
-      color: rgba(255, 255, 255, 0.9);
-      line-height: 1.7;
-      font-style: italic;
-      margin-bottom: 1rem;
-    }
-    .test-quote::before {
-      content: '"';
-      font-size: 1.5rem;
-      color: var(--naranja);
-    }
-    .test-author {
-      font-size: 0.85rem;
-      font-weight: 800;
-      color: var(--naranja);
-    }
-    .test-role {
-      font-size: 0.8rem;
-      color: rgba(255, 255, 255, 0.6);
-    }
+        .stat-card {
+            background: #f8fafc;
+            padding: 16px 12px 14px;
+            border-radius: 14px;
+            text-align: center;
+            border: 1px solid #e9edf2;
+            transition: 0.15s;
+        }
+        .stat-card:hover {
+            border-color: #cbd7e5;
+        }
 
-    /* ─── CONTACTO ─── */
-    .contacto {
-      background: var(--oscuro);
-      color: var(--blanco);
-      text-align: center;
-    }
-    .contacto .section-title {
-      color: var(--blanco);
-    }
-    .contacto .section-title span {
-      color: var(--naranja);
-    }
-    .contacto .section-eyebrow {
-      color: var(--naranja);
-    }
-    .contact-cards {
-      display: flex;
-      gap: 1.5rem;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-top: 3rem;
-    }
-    .contact-card {
-      background: rgba(255, 255, 255, 0.07);
-      border: 1.5px solid rgba(255, 255, 255, 0.12);
-      border-radius: 20px;
-      padding: 2rem 2.5rem;
-      text-decoration: none;
-      color: var(--blanco);
-      transition: background 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
-      text-align: center;
-      min-width: 180px;
-      cursor: pointer;
-    }
-    .contact-card:hover {
-      background: rgba(255, 255, 255, 0.13);
-      transform: translateY(-4px);
-      border-color: var(--naranja);
-    }
-    .contact-icon {
-      font-size: 2.2rem;
-      margin-bottom: 0.7rem;
-    }
-    .contact-label {
-      font-size: 0.75rem;
-      color: var(--naranja);
-      font-weight: 800;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      margin-bottom: 0.3rem;
-    }
-    .contact-value {
-      font-size: 1rem;
-      font-weight: 700;
-      word-break: break-word;
-    }
+        .stat-card .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #5a738b;
+            font-weight: 600;
+        }
 
-    /* ─── FOOTER ─── */
-    footer {
-      background: #0d1a27;
-      color: rgba(255, 255, 255, 0.45);
-      text-align: center;
-      padding: 1.8rem 1.5rem;
-      font-size: 0.82rem;
-      line-height: 1.6;
-    }
-    footer span {
-      color: var(--naranja);
-    }
+        .stat-card .value {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #0b2b44;
+            line-height: 1.3;
+            margin-top: 2px;
+        }
 
-    /* ─── SCROLL REVEAL ─── */
-    .reveal {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
+        .stat-card .value small {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #4a6f8c;
+            margin-left: 2px;
+        }
 
-    /* ─── RESPONSIVE ─── */
-    @media (max-width: 768px) {
-      nav ul {
-        position: absolute;
-        top: var(--nav-height);
-        left: 0;
-        width: 100%;
-        background: rgba(192, 66, 122, 0.98);
-        flex-direction: column;
-        padding: 1.5rem 2rem;
-        gap: 1.2rem;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        transform: translateY(-120%);
-        transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-      }
-      nav ul.open {
-        transform: translateY(0);
-      }
-      nav ul a {
-        font-size: 1rem;
-        padding: 0.3rem 0;
-        width: 100%;
-        text-align: center;
-      }
-      nav ul a::after {
-        display: none;
-      }
-      .menu-toggle {
-        display: flex;
-      }
+        /* ===== GRÁFICAS ===== */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 8px;
+        }
 
-      .hero h1 {
-        font-size: 2.6rem;
-      }
-      .hero-stats {
-        gap: 1.5rem;
-      }
+        .chart-box {
+            background: #fafcfe;
+            border-radius: 16px;
+            padding: 18px 16px 14px;
+            border: 1px solid #e9edf2;
+        }
 
-      .precio-card {
-        padding: 1.5rem;
-      }
-      .precio-card .price {
-        font-size: 2.4rem;
-      }
-      .contact-card {
-        min-width: 140px;
-        padding: 1.5rem;
-      }
-    }
+        .chart-box .chart-title {
+            font-weight: 500;
+            color: #1f405a;
+            font-size: 0.85rem;
+            text-align: center;
+            margin-bottom: 12px;
+            letter-spacing: 0.2px;
+        }
 
-    @media (max-width: 480px) {
-      :root {
-        --nav-height: 60px;
-      }
-      nav {
-        padding: 0 1.2rem;
-      }
-      .nav-logo {
-        font-size: 1.2rem;
-      }
-      .hero {
-        padding: 1.5rem 1rem 3rem;
-      }
-      .hero h1 {
-        font-size: 2.2rem;
-      }
-      section {
-        padding: 3rem 1rem;
-      }
-      .precio-grid {
-        grid-template-columns: 1fr;
-        max-width: 360px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-      .btn-primary,
-      .btn-secondary {
-        padding: 0.7rem 1.5rem;
-        font-size: 0.9rem;
-      }
-    }
-  </style>
+        .chart-wrapper {
+            position: relative;
+            height: 190px;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid #eef2f6;
+            font-size: 0.75rem;
+            color: #6a7f94;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .footer .conversion-note {
+            background: #f1f5f9;
+            padding: 4px 14px;
+            border-radius: 20px;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 800px) {
+            .dashboard { padding: 20px; }
+            .charts-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .header h1 { font-size: 1.4rem; }
+            .header h1 span { font-size: 0.85rem; display: block; margin-left: 0; }
+        }
+
+        @media (max-width: 500px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .btn-group .btn { flex: 1 1 100%; }
+            .input-section { padding: 16px; }
+        }
+    </style>
 </head>
 <body>
 
-  <!-- ─── NAV ─── -->
-  <nav id="navbar" role="navigation" aria-label="Navegación principal">
-    <div class="nav-logo"><span>Yachayniyoq</span></div>
-    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-    <ul id="navMenu">
-      <li><a href="#problema" data-nav>El Problema</a></li>
-      <li><a href="#propuesta" data-nav>Nuestra Solución</a></li>
-      <li><a href="#precio" data-nav>Servicios</a></li>
-      <li><a href="#contacto" data-nav>Contacto</a></li>
-    </ul>
-  </nav>
+<div class="dashboard">
 
-  <!-- ─── HERO ─── -->
-  <section class="hero" id="inicio">
-    <div class="hero-badge">🎭 Innovación Social · Cusco, Perú</div>
-    <h1><span>Yachayniyoq</span></h1>
-    <p class="hero-sub">Marionetas, Arte y Música para Niños</p>
-    <p class="hero-tagline">La alternativa creativa al uso excesivo de pantallas</p>
-    <div class="hero-btns">
-      <a href="#contacto" class="btn-primary">📲 Inscribe a tu hijo</a>
-      <a href="#propuesta" class="btn-secondary">Conoce más</a>
-    </div>
-    <div class="hero-stats">
-      <div class="stat">
-        <div class="stat-num">S/40</div>
-        <div class="stat-label">al mes por niño</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num">6–12</div>
-        <div class="stat-label">años de edad</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num">2</div>
-        <div class="stat-label">fases del programa</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num">0%</div>
-        <div class="stat-label">pantallas en el taller</div>
-      </div>
-    </div>
-  </section>
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo-icon">BAC</div>
+            <h1>Analizador de Alcohol <span>· Sistema de Monitoreo</span></h1>
+        </div>
+        <div class="header-right">
+            <div class="api-status" id="apiStatus">
+                <span class="dot loading" id="statusDot"></span>
+                <span id="statusText">Cargando...</span>
+            </div>
+            <div class="user-badge">
+                <span>Usuarios</span>
+                <span class="number" id="userCountDisplay">0</span>
+            </div>
+        </div>
+    </header>
 
-  <!-- ─── PROBLEMA ─── -->
-  <section class="problema" id="problema">
-    <div class="container">
-      <p class="section-eyebrow reveal">El problema que identificamos</p>
-      <h2 class="section-title reveal">El uso excesivo de pantallas <span>afecta a nuestros niños</span></h2>
-      <p class="section-desc reveal">Un niño que pasa más de 6 horas al día frente a una pantalla duerme mal, rinde menos en el colegio y se aísla de su familia y amigos. Este problema toca 4 Objetivos de Desarrollo Sostenible.</p>
-      <div class="problema-grid">
-        <div class="ods-card reveal">
-          <div class="ods-num">ODS 3</div>
-          <h3>Salud y Bienestar</h3>
-          <p>El exceso de pantallas genera sedentarismo, alteraciones del sueño, ansiedad e irritabilidad en los niños.</p>
+    <!-- ===== INPUT ===== -->
+    <section class="input-section">
+        <div class="input-group">
+            <label for="mgInput">Concentración (mg/L)</label>
+            <input type="number" id="mgInput" placeholder="Ejemplo: 0.50" step="0.01" min="0" value="0.42">
+            <span class="hint">Ingrese el valor de alcohol en aire</span>
         </div>
-        <div class="ods-card reveal">
-          <div class="ods-num">ODS 4</div>
-          <h3>Educación de Calidad</h3>
-          <p>La sobreexposición reduce la atención y la concentración, deteriorando el rendimiento escolar.</p>
+        <div class="btn-group">
+            <button class="btn btn-primary" id="analyzeBtn">Agregar medición</button>
+            <button class="btn btn-secondary" id="refreshApiBtn">Recargar API</button>
+            <button class="btn btn-outline" id="resetBtn">Reiniciar</button>
         </div>
-        <div class="ods-card reveal">
-          <div class="ods-num">ODS 10</div>
-          <h3>Reducción de Desigualdades</h3>
-          <p>No todos los niños acceden a supervisión parental ni educación digital adecuada.</p>
-        </div>
-        <div class="ods-card reveal">
-          <div class="ods-num">ODS 16</div>
-          <h3>Paz, Justicia e Instituciones</h3>
-          <p>Se requieren políticas públicas que protejan los derechos de la infancia en entornos digitales.</p>
-        </div>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ─── INSIGHTS ─── -->
-  <section id="insights">
-    <div class="container">
-      <p class="section-eyebrow reveal">Lo que escuchamos</p>
-      <h2 class="section-title reveal">Hablamos con <span>familias reales de Cusco</span></h2>
-      <p class="section-desc reveal">Entrevistamos a Sara (11 años), a su mamá Lucía y al docente Federico. Esto es lo que nos dijeron:</p>
-      <div class="insights-grid">
-        <div class="insight-card reveal">
-          <div class="insight-tag">Insight 01 — Sara, 11 años</div>
-          <h3>Los niños usan el celular porque no tienen alternativas</h3>
-          <p>Sara no rechaza la tecnología — la usa porque cuando está sola en casa no encuentra actividades igual de atractivas y accesibles.</p>
-          <p class="insight-person">— Sara, 11 años, estudiante de primaria</p>
+    <!-- ===== STATS ===== -->
+    <section class="stats-grid">
+        <div class="stat-card">
+            <div class="label">BAC actual</div>
+            <div class="value" id="bacDisplay">0.00<small>%</small></div>
         </div>
-        <div class="insight-card reveal">
-          <div class="insight-tag">Insight 02 — Lucía, mamá</div>
-          <h3>Los padres quieren actuar pero se sienten solos</h3>
-          <p>Lucía sabe que el uso excesivo es un problema e intenta dar el ejemplo, pero no tiene herramientas para poner límites sin generar conflictos.</p>
-          <p class="insight-person">— Lucía Rodrigues, madre de familia</p>
+        <div class="stat-card">
+            <div class="label">Última medición</div>
+            <div class="value" id="lastMgDisplay">0.00<small> mg/L</small></div>
         </div>
-        <div class="insight-card reveal">
-          <div class="insight-tag">Insight 03 — Federico, docente</div>
-          <h3>Los docentes actúan solos sin apoyo familiar</h3>
-          <p>Federico detecta el problema en el aula pero actúa de manera aislada — sin coordinación con las familias ni herramientas pedagógicas.</p>
-          <p class="insight-person">— Federico Barbachan, docente de primaria</p>
+        <div class="stat-card">
+            <div class="label">Total registros</div>
+            <div class="value" id="totalUsersDisplay">0</div>
         </div>
-      </div>
-    </div>
-  </section>
+        <div class="stat-card">
+            <div class="label">Promedio</div>
+            <div class="value" id="avgMgDisplay">0.00<small> mg/L</small></div>
+        </div>
+    </section>
 
-  <!-- ─── PROPUESTA ─── -->
-  <section class="propuesta" id="propuesta">
-    <div class="container">
-      <p class="section-eyebrow reveal">Nuestra solución</p>
-      <h2 class="section-title reveal">Yachayniyoq</h2>
-      <p class="section-desc reveal">Un programa presencial en dos fases que ofrece a los niños de 6 a 12 años actividades creativas tan divertidas como el celular — pero que desarrollan sus habilidades sociales, motoras y emocionales.</p>
-      <div class="fases">
-        <div class="fase-card reveal">
-          <div class="fase-icon">🏫</div>
-          <h3>Fase 1 — Taller en el colegio</h3>
-          <p>Visitamos los colegios y dictamos un taller donde los niños construyen sus propios títeres con materiales reciclados: cartón, tela y pinturas. Una experiencia que los engancha desde el primer día.</p>
+    <!-- ===== CHARTS ===== -->
+    <section class="charts-grid">
+        <div class="chart-box">
+            <div class="chart-title">Historial de concentración (%BAC)</div>
+            <div class="chart-wrapper">
+                <canvas id="historyChart"></canvas>
+            </div>
         </div>
-        <div class="fase-card reveal">
-          <div class="fase-icon">🏠</div>
-          <h3>Fase 2 — Local comunitario</h3>
-          <p>Los niños interesados son invitados a clases regulares de manualidades, música y arte en nuestro espacio comunitario. Un lugar seguro, creativo y social donde el celular no hace falta.</p>
+        <div class="chart-box">
+            <div class="chart-title">Distribución de usuarios por mg/L</div>
+            <div class="chart-wrapper">
+                <canvas id="distChart"></canvas>
+            </div>
         </div>
-        <div class="fase-card reveal">
-          <div class="fase-icon">🎯</div>
-          <h3>Resultado esperado</h3>
-          <p>Niños con actividades creativas que compiten con el celular, y familias con un espacio de apoyo real. Padres empoderados con herramientas concretas, sin conflictos diarios.</p>
-        </div>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ─── PRECIO (SERVICIOS) ─── -->
-  <section class="precio" id="precio">
-    <div class="container">
-      <p class="section-eyebrow reveal">Elige el servicio ideal</p>
-      <h2 class="section-title reveal">Planes <span>para cada necesidad</span></h2>
-      <p class="section-desc reveal" style="margin:0 auto;">Desde la inscripción mensual hasta talleres especiales y alianzas con colegios.</p>
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <span>Datos obtenidos desde <strong>/mediciones</strong></span>
+        <span class="conversion-note">Factor de conversión: 1 mg/L = 0.0001 %BAC</span>
+    </footer>
 
-      <div class="precio-grid">
-        <!-- 1. Mensualidad -->
-        <div class="precio-card reveal">
-          <span class="card-tag">Popular</span>
-          <div class="price">S/40 <small>/mes</small></div>
-          <div class="price-sub">por niño · clases semanales</div>
-          <p class="desc">Acceso a todas las actividades regulares de arte, música y manualidades en nuestro local.</p>
-          <ul class="feature-list">
-            <li>2 clases semanales (8/mes)</li>
-            <li>Materiales incluidos</li>
-            <li>Reporte de avance</li>
-            <li>Espacio seguro y supervisado</li>
-          </ul>
-          <a href="#contacto" class="btn-small">📲 Inscribir ahora</a>
-        </div>
+</div>
 
-        <!-- 2. Kit para casa -->
-        <div class="precio-card reveal">
-          <span class="card-tag">Complemento</span>
-          <div class="price">S/12 <small>/kit</small></div>
-          <div class="price-sub">práctica en familia</div>
-          <p class="desc">Materiales y guía para que el niño siga creando en casa, sin necesidad de internet.</p>
-          <ul class="feature-list">
-            <li>Cartón, tela, pinturas</li>
-            <li>Guía con 10 actividades</li>
-            <li>Fomenta el tiempo en familia</li>
-            <li>Ideal para vacaciones</li>
-          </ul>
-          <a href="#contacto" class="btn-small">🛒 Adquirir kit</a>
-        </div>
-
-        <!-- 3. Taller intensivo -->
-        <div class="precio-card reveal">
-          <span class="card-tag">Especial</span>
-          <div class="price">S/80 <small>/taller</small></div>
-          <div class="price-sub">4 sesiones · una semana</div>
-          <p class="desc">Taller intensivo de marionetas y arte escénico. Ideal para colegios o grupos organizados.</p>
-          <ul class="feature-list">
-            <li>4 sesiones de 2 horas</li>
-            <li>Presentación final ante padres</li>
-            <li>Certificado de participación</li>
-            <li>Materiales y fotos incluidas</li>
-          </ul>
-          <a href="#contacto" class="btn-small">🎭 Contratar taller</a>
-        </div>
-
-        <!-- 4. Alianza con colegios -->
-        <div class="precio-card reveal">
-          <span class="card-tag">Institucional</span>
-          <div class="price">S/500 <small>/mes</small></div>
-          <div class="price-sub">hasta 25 niños</div>
-          <p class="desc">Programa completo para colegios o municipalidades con impacto social medible.</p>
-          <ul class="feature-list">
-            <li>Talleres en el colegio</li>
-            <li>Capacitación docente</li>
-            <li>Reportes de impacto</li>
-            <li>Materiales incluidos</li>
-          </ul>
-          <a href="#contacto" class="btn-small">🤝 Solicitar alianza</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── COCREACION ─── -->
-  <section class="cocreacion">
-    <div class="container">
-      <p class="section-eyebrow reveal">Cómo lo diseñamos</p>
-      <h2 class="section-title reveal">Creado <span>junto a las familias</span></h2>
-      <p class="section-desc reveal">Esta solución no la inventamos solos. La cocreamos con Sara, Lucía y Federico en 4 pasos:</p>
-      <div class="pasos">
-        <div class="paso reveal">
-          <div class="paso-num">1</div>
-          <h3>Validación de insights</h3>
-          <p>Compartimos nuestros 3 hallazgos con los entrevistados. Todos validaron el problema de los padres como el más urgente.</p>
-        </div>
-        <div class="paso reveal">
-          <div class="paso-num">2</div>
-          <h3>Ideación conjunta</h3>
-          <p>Presentamos ideas preliminares a Lucía y Federico para que las evaluaran desde su experiencia real.</p>
-        </div>
-        <div class="paso reveal">
-          <div class="paso-num">3</div>
-          <h3>Retroalimentación</h3>
-          <p>Lucía pidió algo sin internet. Federico sugirió usar docentes como canal. Sara quería diversión, no obligaciones.</p>
-        </div>
-        <div class="paso reveal">
-          <div class="paso-num">4</div>
-          <h3>Refinamiento final</h3>
-          <p>Con todas las sugerencias, pasamos de una app digital a un espacio presencial más humano y con mayor impacto real.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── TESTIMONIOS ─── -->
-  <section class="testimonios">
-    <div class="container">
-      <p class="section-eyebrow reveal">Voces reales</p>
-      <h2 class="section-title reveal">Lo que dijeron nuestros co-creadores</h2>
-      <div class="test-grid">
-        <div class="test-card reveal">
-          <p class="test-quote">Quiero hacer algo, pero no sé cómo controlar el uso del celular sin que se enoje conmigo. Necesito herramientas concretas, no solo consejos.</p>
-          <div class="test-author">Lucía Rodrigues</div>
-          <div class="test-role">Madre de familia · Co-creadora</div>
-        </div>
-        <div class="test-card reveal">
-          <p class="test-quote">Lo veo en el aula todos los días: los niños llegan cansados, distraídos. Pero si los padres no se involucran, yo solo no puedo resolver esto.</p>
-          <div class="test-author">Federico Barbachan</div>
-          <div class="test-role">Docente de primaria · Co-creador</div>
-        </div>
-        <div class="test-card reveal">
-          <p class="test-quote">Prefiero jugar con mis amigas. Pero cuando estoy sola en casa no hay nada que hacer y el celular siempre está ahí.</p>
-          <div class="test-author">Sara, 11 años</div>
-          <div class="test-role">Estudiante · Co-creadora</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── CONTACTO ─── -->
-  <section class="contacto" id="contacto">
-    <div class="container">
-      <p class="section-eyebrow reveal">Contáctanos</p>
-      <h2 class="section-title reveal">¿Quieres inscribir <span>a tu hijo?</span></h2>
-      <p style="color:rgba(255,255,255,0.65); margin-top:0.5rem; font-size:1rem;" class="reveal">Escríbenos por WhatsApp o correo. El primer taller es gratuito.</p>
-      <div class="contact-cards">
-        <a href="https://wa.me/51931998513" class="contact-card reveal" target="_blank" rel="noopener noreferrer">
-          <div class="contact-icon">📲</div>
-          <div class="contact-label">WhatsApp</div>
-          <div class="contact-value">931 998 513</div>
-        </a>
-        <a href="mailto:fabiolaquenayaq@gmail.com" class="contact-card reveal" target="_blank" rel="noopener noreferrer">
-          <div class="contact-icon">✉️</div>
-          <div class="contact-label">Correo</div>
-          <div class="contact-value">fabiolaquenayaq@gmail.com</div>
-        </a>
-        <div class="contact-card reveal">
-          <div class="contact-icon">📍</div>
-          <div class="contact-label">Ubicación</div>
-          <div class="contact-value">Cusco, Perú</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── FOOTER ─── -->
-  <footer>
-    <p>© 2025 <span>Yachayniyoq</span> · Proyecto de Innovación Social · Universidad Continental · Cusco, Perú</p>
-    <p style="margin-top:0.4rem;">Grupo Los Fantásticos — García · Muñoz · Pastor · Quenaya · Tito</p>
-  </footer>
-
-  <!-- ─── SCRIPTS ─── -->
-  <script>
+<script>
     (function() {
-      'use strict';
+        'use strict';
 
-      const menuToggle = document.getElementById('menuToggle');
-      const navMenu = document.getElementById('navMenu');
+        // ===== CONFIGURACIÓN =====
+        const API_URL = 'https://rtx-f3c9drecaxede7cc.brazilsouth-01.azurewebsites.net/mediciones';
+        const MG_TO_BAC = 0.0001;
 
-      function toggleMenu() {
-        const isOpen = navMenu.classList.toggle('open');
-        menuToggle.classList.toggle('active');
-        menuToggle.setAttribute('aria-expanded', isOpen);
-      }
+        // ===== ESTADO =====
+        let records = []; // { mg, bac }
 
-      menuToggle.addEventListener('click', toggleMenu);
+        // ===== DOM REFERENCIAS =====
+        const mgInput = document.getElementById('mgInput');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const refreshApiBtn = document.getElementById('refreshApiBtn');
+        const apiStatus = document.getElementById('apiStatus');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
 
-      document.querySelectorAll('[data-nav]').forEach(link => {
-        link.addEventListener('click', function() {
-          if (navMenu.classList.contains('open')) {
-            navMenu.classList.remove('open');
-            menuToggle.classList.remove('active');
-            menuToggle.setAttribute('aria-expanded', 'false');
-          }
-        });
-      });
+        const bacDisplay = document.getElementById('bacDisplay');
+        const lastMgDisplay = document.getElementById('lastMgDisplay');
+        const totalUsersDisplay = document.getElementById('totalUsersDisplay');
+        const avgMgDisplay = document.getElementById('avgMgDisplay');
+        const userCountDisplay = document.getElementById('userCountDisplay');
 
-      const reveals = document.querySelectorAll('.reveal');
-      const revealObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry, index) => {
-          if (entry.isIntersecting) {
-            const delay = index * 80;
-            setTimeout(() => {
-              entry.target.classList.add('visible');
-            }, delay);
-            revealObserver.unobserve(entry.target);
-          }
-        });
-      }, {
-        threshold: 0.1,
-        rootMargin: '0px 0px -20px 0px'
-      });
-      reveals.forEach(el => revealObserver.observe(el));
+        const ctxHistory = document.getElementById('historyChart').getContext('2d');
+        const ctxDist = document.getElementById('distChart').getContext('2d');
 
-      const nav = document.getElementById('navbar');
-      window.addEventListener('scroll', function() {
-        const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-        if (currentScroll > 80) {
-          nav.style.background = 'rgba(192, 66, 122, 0.98)';
-          nav.style.boxShadow = '0 4px 24px rgba(0,0,0,0.2)';
-        } else {
-          nav.style.background = 'rgba(192, 66, 122, 0.97)';
-          nav.style.boxShadow = '0 2px 16px rgba(0,0,0,0.15)';
+        let historyChart = null;
+        let distChart = null;
+
+        // ===== FUNCIONES AUXILIARES =====
+        function mgToBac(mg) {
+            return mg * MG_TO_BAC;
         }
-      });
 
-      document.addEventListener('click', function(event) {
-        const isClickInside = nav.contains(event.target);
-        if (!isClickInside && navMenu.classList.contains('open')) {
-          navMenu.classList.remove('open');
-          menuToggle.classList.remove('active');
-          menuToggle.setAttribute('aria-expanded', 'false');
+        function setStatus(type, message) {
+            const dot = statusDot;
+            dot.className = 'dot';
+            if (type === 'success') {
+                dot.classList.add('success');
+                apiStatus.style.borderColor = '#1f8b4c';
+            } else if (type === 'loading') {
+                dot.classList.add('loading');
+                apiStatus.style.borderColor = '#d4a02b';
+            } else if (type === 'error') {
+                dot.classList.add('error');
+                apiStatus.style.borderColor = '#c73a3a';
+            } else {
+                dot.classList.add('info');
+                apiStatus.style.borderColor = '#2a7bb0';
+            }
+            statusText.textContent = message;
         }
-      });
 
-      console.log('🚀 Yachayniyoq — Listo para inspirar sonrisas');
+        // ===== ACTUALIZAR DASHBOARD =====
+        function updateDashboard() {
+            const total = records.length;
+            let lastMg = total > 0 ? records[records.length - 1].mg : 0;
+            let lastBac = total > 0 ? records[records.length - 1].bac : 0;
+            let sumMg = records.reduce((acc, r) => acc + r.mg, 0);
+            let avgMg = total > 0 ? sumMg / total : 0;
+
+            bacDisplay.innerHTML = `${(lastBac * 100).toFixed(3)}<small>%</small>`;
+            lastMgDisplay.innerHTML = `${lastMg.toFixed(3)}<small> mg/L</small>`;
+            totalUsersDisplay.textContent = total;
+            avgMgDisplay.innerHTML = `${avgMg.toFixed(3)}<small> mg/L</small>`;
+            userCountDisplay.textContent = total;
+
+            updateHistoryChart();
+            updateDistChart();
+        }
+
+        // ===== GRÁFICAS =====
+        function updateHistoryChart() {
+            const labels = records.map((_, idx) => `#${idx + 1}`);
+            const dataBac = records.map(r => parseFloat((r.bac * 100).toFixed(4)));
+
+            if (historyChart) {
+                historyChart.data.labels = labels;
+                historyChart.data.datasets[0].data = dataBac;
+                historyChart.update();
+            } else {
+                historyChart = new Chart(ctxHistory, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '%BAC',
+                            data: dataBac,
+                            borderColor: '#1d6b9e',
+                            backgroundColor: 'rgba(29, 107, 158, 0.06)',
+                            borderWidth: 2.5,
+                            pointBackgroundColor: '#0f4b73',
+                            pointBorderColor: 'white',
+                            pointBorderWidth: 1.5,
+                            tension: 0.2,
+                            fill: true,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(ctx) {
+                                        return ctx.parsed.y.toFixed(3) + ' %';
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: 'rgba(0,0,0,0.04)' },
+                                ticks: { callback: function(val) { return val.toFixed(2) + '%'; } }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { maxTicksLimit: 12, font: { size: 9 } }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function updateDistChart() {
+            const bucketMap = new Map();
+            records.forEach(r => {
+                const key = Math.round(r.mg * 100) / 100;
+                bucketMap.set(key, (bucketMap.get(key) || 0) + 1);
+            });
+            const sortedKeys = Array.from(bucketMap.keys()).sort((a, b) => a - b);
+            const labels = sortedKeys.map(k => k.toFixed(2));
+            const counts = sortedKeys.map(k => bucketMap.get(k));
+
+            if (distChart) {
+                distChart.data.labels = labels;
+                distChart.data.datasets[0].data = counts;
+                distChart.update();
+            } else {
+                distChart = new Chart(ctxDist, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Usuarios',
+                            data: counts,
+                            backgroundColor: 'rgba(29, 107, 158, 0.5)',
+                            borderColor: '#1d6b9e',
+                            borderWidth: 1.5,
+                            borderRadius: 4,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(ctx) {
+                                        return ctx.parsed.y + ' usuario' + (ctx.parsed.y !== 1 ? 's' : '');
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: 'rgba(0,0,0,0.04)' },
+                                ticks: { stepSize: 1 }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { maxTicksLimit: 12, font: { size: 9 } }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // ===== CARGAR DESDE API =====
+        async function loadFromApi() {
+            setStatus('loading', 'Cargando datos...');
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error('Error HTTP: ' + response.status);
+                const data = await response.json();
+
+                if (!Array.isArray(data) || data.length === 0) {
+                    setStatus('info', 'Sin datos disponibles');
+                    if (records.length === 0) loadDemoData();
+                    return;
+                }
+
+                const newRecords = data
+                    .map(item => {
+                        const mg = parseFloat(item.alcohol);
+                        if (isNaN(mg) || mg < 0) return null;
+                        return { mg: mg, bac: mgToBac(mg) };
+                    })
+                    .filter(r => r !== null);
+
+                if (newRecords.length === 0) {
+                    setStatus('info', 'Datos inválidos');
+                    if (records.length === 0) loadDemoData();
+                    return;
+                }
+
+                records = newRecords;
+                updateDashboard();
+                setStatus('success', records.length + ' registros cargados');
+            } catch (error) {
+                console.error('Error al cargar API:', error);
+                setStatus('error', 'Error de conexión');
+                if (records.length === 0) loadDemoData();
+            }
+        }
+
+        // ===== DATOS DE DEMO (FALLBACK) =====
+        function loadDemoData() {
+            const demoData = [0.32, 0.45, 0.28, 0.60, 0.38, 0.72, 0.15, 0.50, 0.41, 0.33, 0.55, 0.22];
+            records = demoData.map(val => {
+                const mgRounded = Math.round(val * 1000) / 1000;
+                return { mg: mgRounded, bac: mgToBac(mgRounded) };
+            });
+            updateDashboard();
+            setStatus('info', 'Datos de ejemplo');
+        }
+
+        // ===== AGREGAR REGISTRO LOCAL =====
+        function addRecord(mg) {
+            if (isNaN(mg) || mg < 0) {
+                alert('Ingrese un valor numérico válido (mg/L ≥ 0)');
+                return false;
+            }
+            const mgRounded = Math.round(mg * 1000) / 1000;
+            records.push({ mg: mgRounded, bac: mgToBac(mgRounded) });
+            updateDashboard();
+            setStatus('success', 'Medición agregada localmente');
+            return true;
+        }
+
+        function resetData() {
+            if (records.length === 0) return;
+            if (confirm('¿Eliminar todos los registros locales?')) {
+                records = [];
+                updateDashboard();
+                mgInput.value = '';
+                setStatus('info', 'Datos reiniciados');
+            }
+        }
+
+        // ===== EVENTOS =====
+        analyzeBtn.addEventListener('click', function() {
+            const raw = mgInput.value.trim();
+            if (raw === '') { alert('Ingrese un valor de mg/L'); return; }
+            const mg = parseFloat(raw);
+            if (isNaN(mg) || mg < 0) { alert('Valor inválido. Use un número positivo.'); return; }
+            addRecord(mg);
+            mgInput.value = '';
+            mgInput.focus();
+        });
+
+        refreshApiBtn.addEventListener('click', loadFromApi);
+        resetBtn.addEventListener('click', resetData);
+
+        mgInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                analyzeBtn.click();
+                e.preventDefault();
+            }
+        });
+
+        // ===== INICIALIZACIÓN =====
+        loadFromApi();
     })();
-  </script>
-
+</script>
 </body>
 </html>
