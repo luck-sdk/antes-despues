@@ -711,12 +711,15 @@
             background: var(--bg-sidebar);
             border-top: 1px solid var(--border-subtle);
             padding: 12px 40px;
+            z-index: 1000;
+        }
+
+        .footer-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 11px;
-            color: var(--text-secondary);
-            z-index: 1000;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
         .footer-left {
@@ -729,6 +732,8 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            font-size: 11px;
+            color: var(--text-secondary);
         }
 
         .footer-item i {
@@ -736,29 +741,38 @@
             color: var(--text-muted);
         }
 
-        /* Notification */
-        .notification {
-            position: fixed;
-            top: 100px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-20px);
-            background: var(--bg-sidebar);
-            color: var(--text-primary);
-            padding: 12px 24px;
-            border-radius: 10px;
-            z-index: 2000;
-            font-weight: 500;
-            font-size: 13px;
-            opacity: 0;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-xl);
-            border: 1px solid var(--border-subtle);
-            pointer-events: none;
+        .team-section {
+            text-align: right;
         }
 
-        .notification.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
+        .team-title {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .team-members {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .team-member {
+            background: rgba(59, 130, 246, 0.1);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            color: var(--text-primary);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .team-member strong {
+            color: #60a5fa;
+            font-weight: 600;
         }
 
         /* Responsive */
@@ -778,6 +792,16 @@
             }
             .canvas-area {
                 height: 50vh;
+            }
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .team-section {
+                text-align: center;
+            }
+            .team-members {
+                justify-content: center;
             }
         }
     </style>
@@ -932,10 +956,10 @@
                             <div class="element-group">
                                 <div class="element-group-title">Actores</div>
                                 <div class="element-item"><span class="dot dot-actor"></span>Pasajero</div>
-                                <div class="element-item"><span class="dot dot-actor"></span>Cliente</div>
                                 <div class="element-item"><span class="dot dot-actor"></span>Vendedor Agencia</div>
-                                <div class="element-item"><span class="dot dot-actor"></span>Asesor Call Center</div>
                                 <div class="element-item"><span class="dot dot-actor"></span>Agente de Ventas</div>
+                                <div class="element-item"><span class="dot dot-actor"></span>Asesor Call Center</div>
+                                <div class="element-item"><span class="dot dot-actor"></span>Cliente</div>
                             </div>
                             <div class="element-group">
                                 <div class="element-group-title">Procesos</div>
@@ -1175,21 +1199,33 @@
 
     <!-- Footer Bar -->
     <footer class="footer-bar">
-        <div class="footer-left">
-            <div class="footer-item">
-                <i class="fa-solid fa-info-circle"></i>
-                <span>Modelo: Arquitectura Empresarial FAMISA</span>
+        <div class="footer-content">
+            <div class="footer-left">
+                <div class="footer-item">
+                    <i class="fa-solid fa-info-circle"></i>
+                    <span>Modelo: Arquitectura Empresarial FAMISA</span>
+                </div>
+                <div class="footer-item">
+                    <span>122 elementos</span>
+                </div>
+                <div class="footer-item">
+                    <span>96 relaciones</span>
+                </div>
+                <div class="footer-item">
+                    <i class="fa-solid fa-calendar"></i>
+                    <span>Última actualización: 25/06/2026</span>
+                </div>
             </div>
-            <div class="footer-item">
-                <span>122 elementos</span>
+            <div class="team-section">
+                <div class="team-title">Equipo de Proyecto</div>
+                <div class="team-members">
+                    <div class="team-member"><strong>Pastor Quispe</strong> - Oscar Jhosue</div>
+                    <div class="team-member"><strong>Sottec Velasque</strong> - Junior Jeferson</div>
+                    <div class="team-member"><strong>Mamani León</strong> - Jose David</div>
+                    <div class="team-member"><strong>Huaman Suma</strong> - Eddy</div>
+                    <div class="team-member"><strong>Llanos Luna</strong> - Yury Yohan</div>
+                </div>
             </div>
-            <div class="footer-item">
-                <span>96 relaciones</span>
-            </div>
-        </div>
-        <div class="footer-item">
-            <i class="fa-solid fa-calendar"></i>
-            <span>Última actualización: 25/06/2026</span>
         </div>
     </footer>
 
