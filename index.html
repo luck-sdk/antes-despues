@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diagrama - Empresa de Transportes Famisa | Archi 3.0</title>
+    <title>Empresa de Transportes FAMISA | Arquitectura Empresarial</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -18,13 +18,11 @@
         :root {
             --bg-primary: #0f172a;
             --bg-sidebar: #1e293b;
-            --bg-sidebar-hover: #334155;
-            --bg-canvas: #f8fafc;
+            --bg-canvas: #f5f7fa;
             --text-primary: #f1f5f9;
             --text-secondary: #94a3b8;
             --text-muted: #64748b;
             --border-subtle: rgba(148, 163, 184, 0.1);
-            --border-light: rgba(148, 163, 184, 0.2);
             --accent-business: #f97316;
             --accent-application: #3b82f6;
             --accent-technology: #10b981;
@@ -37,61 +35,94 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: var(--bg-primary);
+            background: var(--bg-canvas);
             color: var(--text-primary);
             min-height: 100vh;
-            overflow: hidden;
+            overflow-x: hidden;
             font-weight: 400;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Header */
+        /* Header Institucional */
         .header {
-            position: fixed;
+            position: relative;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #2563eb 100%);
+            padding: 0;
+            z-index: 1000;
+            border-bottom: 3px solid #3b82f6;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 64px;
-            background: var(--bg-sidebar);
-            border-bottom: 1px solid var(--border-subtle);
+            bottom: 0;
+            background: linear-gradient(rgba(15,23,42,0.88), rgba(15,23,42,0.88)), 
+                        url('https://www.famisa.pe/wp-content/uploads/2025/09/famisa-portada-nosotros.webp');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 24px;
-            z-index: 1000;
+            padding: 20px 40px;
+            gap: 24px;
         }
 
         .header-left {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 24px;
+            flex: 1;
         }
 
         .logo-container {
             display: flex;
             align-items: center;
-            padding: 4px 0;
+            padding: 8px 0;
         }
 
         .logo-img {
-            height: 40px;
+            height: 56px;
             width: auto;
             object-fit: contain;
             display: block;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+            transition: transform 0.3s ease;
+        }
+
+        .logo-container:hover .logo-img {
+            transform: scale(1.05);
+        }
+
+        .header-title-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
         .header-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-primary);
-            letter-spacing: -0.01em;
+            font-size: 22px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .header-subtitle {
-            font-size: 12px;
-            color: var(--text-secondary);
+            font-size: 13px;
+            color: rgba(255,255,255,0.85);
             font-weight: 400;
-            margin-top: 1px;
+            letter-spacing: 0.01em;
         }
 
         .header-right {
@@ -101,101 +132,34 @@
         }
 
         .version-badge {
-            background: rgba(59, 130, 246, 0.15);
-            color: var(--accent-application);
-            padding: 5px 12px;
-            border-radius: 6px;
-            font-size: 11px;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
             font-weight: 600;
             letter-spacing: 0.5px;
-        }
-
-        /* Toolbar */
-        .toolbar {
-            position: fixed;
-            top: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--bg-sidebar);
-            padding: 8px 12px;
-            border-radius: 10px;
-            z-index: 999;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: 1px solid var(--border-subtle);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .toolbar-group {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 0 8px;
-        }
-
-        .toolbar-group:not(:last-child) {
-            border-right: 1px solid var(--border-subtle);
-            padding-right: 12px;
-        }
-
-        .toolbar-btn {
-            background: transparent;
-            color: var(--text-secondary);
-            border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 500;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .toolbar-btn:hover {
-            background: var(--bg-sidebar-hover);
-            color: var(--text-primary);
-        }
-
-        .toolbar-btn-text {
-            width: auto;
-            padding: 0 12px;
-            font-size: 12px;
-            font-weight: 500;
-            gap: 6px;
-        }
-
-        .zoom-display {
-            background: rgba(15, 23, 42, 0.5);
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-weight: 600;
-            color: var(--text-primary);
-            min-width: 56px;
-            text-align: center;
-            font-size: 12px;
-            font-variant-numeric: tabular-nums;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
         /* Main Layout */
         .main-layout {
             display: flex;
-            height: 100vh;
-            padding-top: 64px;
+            min-height: calc(100vh - 140px);
         }
 
         /* Sidebar */
         .sidebar {
-            width: 340px;
+            width: 380px;
             background: var(--bg-sidebar);
             border-right: 1px solid var(--border-subtle);
             overflow-y: auto;
             z-index: 100;
             display: flex;
             flex-direction: column;
+            transition: all 0.3s ease;
         }
 
         .sidebar::-webkit-scrollbar {
@@ -207,12 +171,12 @@
         }
 
         .sidebar::-webkit-scrollbar-thumb {
-            background: var(--bg-sidebar-hover);
+            background: #334155;
             border-radius: 3px;
         }
 
         .sidebar-section {
-            padding: 20px;
+            padding: 24px;
             border-bottom: 1px solid var(--border-subtle);
         }
 
@@ -226,7 +190,7 @@
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 1.2px;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -236,282 +200,211 @@
             font-size: 12px;
         }
 
-        /* Accordion */
+        /* Accordion Styles */
+        .accordion {
+            margin-bottom: 12px;
+        }
+
         .accordion-item {
-            margin-bottom: 4px;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid var(--border-subtle);
             border-radius: 8px;
+            margin-bottom: 8px;
             overflow: hidden;
-            transition: background 0.2s;
+            transition: all 0.3s ease;
         }
 
         .accordion-item:hover {
-            background: rgba(51, 65, 85, 0.3);
+            border-color: rgba(59, 130, 246, 0.3);
         }
 
         .accordion-header {
-            padding: 12px 14px;
+            padding: 14px 16px;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: all 0.2s;
+            background: rgba(30, 41, 59, 0.8);
+            transition: all 0.2s ease;
         }
 
-        .accordion-header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex: 1;
+        .accordion-header:hover {
+            background: rgba(59, 130, 246, 0.1);
         }
 
-        .layer-indicator {
-            width: 4px;
-            height: 24px;
-            border-radius: 2px;
-            flex-shrink: 0;
-        }
-
-        .indicator-business { background: var(--accent-business); }
-        .indicator-application { background: var(--accent-application); }
-        .indicator-technology { background: var(--accent-technology); }
-        .indicator-roadmap { background: var(--accent-roadmap); }
-
-        .accordion-info h3 {
+        .accordion-title {
             font-size: 13px;
             font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .accordion-info p {
-            font-size: 11px;
-            color: var(--text-secondary);
-            font-weight: 400;
+        .accordion-title i {
+            color: var(--accent-application);
+            font-size: 14px;
         }
 
         .accordion-toggle {
             color: var(--text-muted);
-            font-size: 11px;
-            transition: transform 0.3s;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-size: 12px;
+            transition: transform 0.3s ease;
         }
 
         .accordion-item.expanded .accordion-toggle {
             transform: rotate(180deg);
+            color: var(--accent-application);
         }
 
         .accordion-content {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.35s ease;
+            transition: max-height 0.4s ease, padding 0.3s ease;
         }
 
         .accordion-item.expanded .accordion-content {
-            max-height: 1500px;
+            max-height: 1000px;
+            padding: 0 16px 16px;
         }
 
         .accordion-body {
-            padding: 4px 14px 16px 30px;
+            font-size: 12px;
+            line-height: 1.7;
+            color: var(--text-secondary);
         }
 
-        .element-group {
-            margin-bottom: 14px;
+        .accordion-body p {
+            margin-bottom: 10px;
         }
 
-        .element-group:last-child {
+        .accordion-body p:last-child {
             margin-bottom: 0;
         }
 
-        .element-group-title {
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-muted);
-            font-weight: 600;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .element-group-title::before {
-            content: '';
-            width: 3px;
-            height: 3px;
-            border-radius: 50%;
-            background: var(--text-muted);
-        }
-
-        .element-item {
-            padding: 7px 10px;
-            border-radius: 5px;
-            margin-bottom: 3px;
-            font-size: 12px;
-            color: var(--text-primary);
-            display: flex;
+        /* Button Styles */
+        .btn {
+            display: inline-flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.15s;
-            font-weight: 400;
-        }
-
-        .element-item:hover {
-            background: rgba(59, 130, 246, 0.1);
-            padding-left: 12px;
-        }
-
-        .dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-
-        .dot-actor { background: var(--accent-business); }
-        .dot-process { background: #ef4444; }
-        .dot-object { background: #f59e0b; }
-        .dot-application { background: var(--accent-application); }
-        .dot-interface { background: #06b6d4; }
-        .dot-service { background: var(--accent-roadmap); }
-        .dot-infra { background: var(--accent-technology); }
-        .dot-software { background: #14b8a6; }
-        .dot-network { background: #0ea5e9; }
-        .dot-phase { background: var(--accent-roadmap); }
-        .dot-wp { background: #ec4899; }
-        .dot-gap { background: #ef4444; }
-
-        /* Image Container */
-        .image-container {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: grab;
-            overflow: hidden;
-            position: relative;
-            background: var(--bg-canvas);
-        }
-
-        .image-container.grabbing {
-            cursor: grabbing;
-        }
-
-        .architecture-image {
-            max-width: none;
-            transition: transform 0.1s ease;
-            transform-origin: center center;
-            box-shadow: var(--shadow-xl);
-            border-radius: 4px;
-        }
-
-        /* Floating Legend Button */
-        .legend-fab {
-            position: fixed;
-            top: 148px;
-            right: 24px;
-            z-index: 1000;
-        }
-
-        .legend-toggle {
-            background: var(--bg-sidebar);
-            border: 1px solid var(--border-subtle);
-            color: var(--text-primary);
-            padding: 10px 14px;
+            padding: 10px 16px;
+            background: linear-gradient(135deg, var(--accent-application), #2563eb);
+            color: white;
+            border: none;
             border-radius: 8px;
             cursor: pointer;
             font-size: 12px;
-            font-weight: 500;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #64748b, #475569);
+            box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 6px 16px rgba(100, 116, 139, 0.4);
+        }
+
+        .btn-group {
             display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: var(--shadow-lg);
-            transition: all 0.2s;
-        }
-
-        .legend-toggle:hover {
-            background: var(--bg-sidebar-hover);
-        }
-
-        .legend-toggle i {
-            font-size: 11px;
-            transition: transform 0.3s;
-        }
-
-        .legend-fab.open .legend-toggle i {
-            transform: rotate(180deg);
-        }
-
-        .legend-panel {
-            position: absolute;
-            top: calc(100% + 8px);
-            right: 0;
-            background: rgba(30, 41, 59, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border-subtle);
-            border-radius: 10px;
-            padding: 14px;
-            min-width: 200px;
-            box-shadow: var(--shadow-xl);
-            opacity: 0;
-            transform: translateY(-10px);
-            pointer-events: none;
-            transition: all 0.25s;
-        }
-
-        .legend-fab.open .legend-panel {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
             gap: 10px;
-            padding: 6px 0;
-            font-size: 12px;
-            color: var(--text-primary);
-            font-weight: 400;
+            margin-top: 16px;
+            flex-wrap: wrap;
         }
 
-        .legend-color {
-            width: 10px;
-            height: 10px;
-            border-radius: 2px;
-            flex-shrink: 0;
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-sidebar);
+            border-radius: 12px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow: auto;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .modal-image {
+            width: 100%;
+            height: auto;
+            display: block;
         }
 
         /* Summary Dashboard */
         .summary-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+            gap: 12px;
         }
 
         .summary-card {
-            background: rgba(15, 23, 42, 0.4);
-            padding: 14px;
-            border-radius: 8px;
-            border: 1px solid var(--border-subtle);
-            transition: all 0.2s;
+            background: rgba(15, 23, 42, 0.5);
+            padding: 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            transition: all 0.3s ease;
         }
 
         .summary-card:hover {
-            background: rgba(15, 23, 42, 0.6);
-            border-color: var(--border-light);
+            background: rgba(15, 23, 42, 0.7);
+            border-color: rgba(59, 130, 246, 0.3);
+            transform: translateY(-2px);
         }
 
         .summary-value {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--text-primary);
+            font-size: 28px;
+            font-weight: 800;
+            color: #3b82f6;
             font-variant-numeric: tabular-nums;
             letter-spacing: -0.02em;
+            margin-bottom: 4px;
         }
 
         .summary-label {
@@ -519,19 +412,169 @@
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.8px;
+            font-weight: 600;
+        }
+
+        /* Architecture Layers */
+        .layer-comparison {
+            margin-top: 16px;
+        }
+
+        .layer-state {
+            margin-bottom: 16px;
+            padding: 14px;
+            background: rgba(15, 23, 42, 0.4);
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        .layer-state.as-is {
+            border-left-color: var(--accent-business);
+        }
+
+        .layer-state.to-be {
+            border-left-color: var(--accent-technology);
+        }
+
+        .layer-state-title {
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .layer-state.as-is .layer-state-title {
+            color: var(--accent-business);
+        }
+
+        .layer-state.to-be .layer-state-title {
+            color: var(--accent-technology);
+        }
+
+        .layer-state-list {
+            list-style: none;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .layer-state-list li {
+            padding: 4px 0;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .layer-state-list li::before {
+            content: '•';
+            position: absolute;
+            left: 4px;
+            color: var(--text-muted);
+        }
+
+        /* Canvas Area */
+        .canvas-area {
+            flex: 1;
+            padding: 32px;
+            overflow: auto;
+            position: relative;
+        }
+
+        .canvas-wrapper {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            padding: 24px;
+            min-height: calc(100vh - 200px);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .canvas-wrapper:hover {
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+        }
+
+        /* Toolbar */
+        .toolbar {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-sidebar);
+            padding: 10px 16px;
+            border-radius: 10px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 8px;
+        }
+
+        .toolbar-group:not(:last-child) {
+            border-right: 1px solid rgba(148, 163, 184, 0.2);
+            padding-right: 12px;
+        }
+
+        .toolbar-btn {
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
             font-weight: 500;
-            margin-top: 2px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Floating Reset Button */
-        .reset-fab {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            z-index: 1000;
+        .toolbar-btn:hover {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            transform: translateY(-1px);
         }
 
-        .reset-btn {
+        .toolbar-btn-text {
+            width: auto;
+            padding: 0 14px;
+            font-size: 12px;
+            font-weight: 500;
+            gap: 6px;
+        }
+
+        .zoom-display {
+            background: rgba(15, 23, 42, 0.6);
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-weight: 600;
+            color: var(--text-primary);
+            min-width: 60px;
+            text-align: center;
+            font-size: 12px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Floating Legend Button */
+        .legend-fab {
+            position: absolute;
+            top: -30px;
+            right: 0;
+            z-index: 100;
+        }
+
+        .legend-toggle {
             background: var(--bg-sidebar);
             border: 1px solid var(--border-subtle);
             color: var(--text-primary);
@@ -544,31 +587,170 @@
             align-items: center;
             gap: 8px;
             box-shadow: var(--shadow-lg);
-            transition: all 0.2s;
+            transition: all 0.2s ease;
+        }
+
+        .legend-toggle:hover {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+        }
+
+        .legend-toggle i {
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .legend-fab.open .legend-toggle i:last-child {
+            transform: rotate(180deg);
+        }
+
+        .legend-panel {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 16px;
+            min-width: 220px;
+            box-shadow: var(--shadow-xl);
+            opacity: 0;
+            transform: translateY(-10px);
+            pointer-events: none;
+            transition: all 0.25s ease;
+        }
+
+        .legend-fab.open .legend-panel {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            font-size: 12px;
+            color: var(--text-primary);
+            font-weight: 400;
+            transition: all 0.2s ease;
+        }
+
+        .legend-item:hover {
+            color: #60a5fa;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        /* Image Container */
+        .image-container {
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image-container.grabbing {
+            cursor: grabbing;
+        }
+
+        .architecture-image {
+            max-width: 100%;
+            transition: transform 0.1s ease;
+            transform-origin: center center;
+            display: block;
+        }
+
+        /* Floating Reset Button */
+        .reset-fab {
+            position: fixed;
+            bottom: 80px;
+            right: 32px;
+            z-index: 1000;
+        }
+
+        .reset-btn {
+            background: var(--bg-sidebar);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
             font-family: inherit;
         }
 
         .reset-btn:hover {
-            background: var(--bg-sidebar-hover);
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
             transform: translateY(-2px);
             box-shadow: var(--shadow-xl);
+        }
+
+        /* Footer Bar */
+        .footer-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-sidebar);
+            border-top: 1px solid var(--border-subtle);
+            padding: 12px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-secondary);
+            z-index: 1000;
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .footer-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer-item i {
+            font-size: 10px;
+            color: var(--text-muted);
         }
 
         /* Notification */
         .notification {
             position: fixed;
-            top: 148px;
+            top: 100px;
             left: 50%;
             transform: translateX(-50%) translateY(-20px);
             background: var(--bg-sidebar);
             color: var(--text-primary);
-            padding: 10px 18px;
-            border-radius: 8px;
+            padding: 12px 24px;
+            border-radius: 10px;
             z-index: 2000;
             font-weight: 500;
-            font-size: 12px;
+            font-size: 13px;
             opacity: 0;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             box-shadow: var(--shadow-xl);
             border: 1px solid var(--border-subtle);
             pointer-events: none;
@@ -587,69 +769,119 @@
                 bottom: 0;
                 left: 0;
                 right: 0;
-                height: 45vh;
+                height: 50vh;
                 border-right: none;
                 border-top: 1px solid var(--border-subtle);
             }
             .main-layout {
                 flex-direction: column;
             }
-            .image-container {
-                height: 55vh;
-            }
-            .toolbar {
-                flex-wrap: wrap;
-                justify-content: center;
+            .canvas-area {
+                height: 50vh;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <div class="header">
-        <div class="header-left">
-            <div class="logo-container">
-                <img src="https://www.famisa.pe/wp-content/uploads/2025/09/logo-famisa-empresa-de-transportes.webp" alt="Famisa Logo" class="logo-img">
+    <!-- Header Institucional -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="logo-container">
+                    <img src="https://www.famisa.pe/wp-content/uploads/2025/09/logo-famisa-empresa-de-transportes.webp" alt="FAMISA Logo" class="logo-img">
+                </div>
+                <div class="header-title-group">
+                    <h1 class="header-title">Empresa de Transportes FAMISA</h1>
+                    <p class="header-subtitle">Arquitectura Empresarial • Venta Omnicanal de Pasajes</p>
+                </div>
             </div>
-            <div>
-                <div class="header-title">Diagrama — Empresa de Transportes Famisa</div>
-                <div class="header-subtitle">Arquitectura Empresarial · Venta Omnicanal de Pasajes</div>
+            <div class="header-right">
+                <span class="version-badge"><i class="fa-solid fa-diagram-project"></i> Framework ArchiMate 3.2</span>
             </div>
         </div>
-        <div class="header-right">
-            <span class="version-badge">ARCHI 3.0</span>
-        </div>
-    </div>
-
-    <!-- Toolbar -->
-    <div class="toolbar">
-        <div class="toolbar-group">
-            <button class="toolbar-btn" onclick="zoomOut()" title="Alejar">
-                <i class="fa-solid fa-minus"></i>
-            </button>
-            <div class="zoom-display" id="zoomLevel">100%</div>
-            <button class="toolbar-btn" onclick="zoomIn()" title="Acercar">
-                <i class="fa-solid fa-plus"></i>
-            </button>
-            <button class="toolbar-btn" onclick="resetZoom()" title="Reiniciar">
-                <i class="fa-solid fa-rotate-left"></i>
-            </button>
-        </div>
-        <div class="toolbar-group">
-            <button class="toolbar-btn toolbar-btn-text" onclick="fitToScreen()">
-                <i class="fa-solid fa-expand"></i>
-                <span>Ajustar</span>
-            </button>
-            <button class="toolbar-btn toolbar-btn-text" onclick="toggleAllLayers()">
-                <i class="fa-regular fa-square"></i>
-                <span>Expandir</span>
-            </button>
-        </div>
-    </div>
+    </header>
 
     <div class="main-layout">
         <!-- Sidebar -->
-        <div class="sidebar">
+        <aside class="sidebar">
+            <!-- Company Description Accordion -->
+            <div class="sidebar-section">
+                <div class="section-title">
+                    <i class="fa-solid fa-building"></i>
+                    Información de la Empresa
+                </div>
+                
+                <div class="accordion">
+                    <div class="accordion-item" id="company-accordion">
+                        <div class="accordion-header" onclick="toggleAccordion('company')">
+                            <div class="accordion-title">
+                                <i class="fa-solid fa-info-circle"></i>
+                                Sobre FAMISA
+                            </div>
+                            <i class="fa-solid fa-chevron-down accordion-toggle"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <p><strong>Empresa de Transportes Salcedo Hnos. S.R.L. (FAMISA)</strong> es una empresa líder en transporte interprovincial en el sur del Perú, reconocida por su innovación, excelencia en el servicio y la confianza de sus pasajeros.</p>
+                                <p><strong>Misión:</strong> Brindar a nuestros pasajeros un servicio de transporte interprovincial seguro, cómodo y accesible, garantizando puntualidad, atención de calidad y una experiencia de viaje confiable en cada ruta.</p>
+                                <p><strong>Visión:</strong> Ser reconocidos como la empresa líder en transporte interprovincial en el sur del Perú, destacando por la innovación, la excelencia en el servicio y la confianza de nuestros pasajeros.</p>
+                                <div class="btn-group">
+                                    <button class="btn" onclick="openModal('organigrama')">
+                                        <i class="fa-solid fa-sitemap"></i>
+                                        Ver Organigrama
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Architecture Layers Comparison -->
+                <div class="accordion">
+                    <div class="accordion-item" id="layers-accordion">
+                        <div class="accordion-header" onclick="toggleAccordion('layers')">
+                            <div class="accordion-title">
+                                <i class="fa-solid fa-layer-group"></i>
+                                Capas de Arquitectura
+                            </div>
+                            <i class="fa-solid fa-chevron-down accordion-toggle"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <div class="layer-comparison">
+                                    <div class="layer-state as-is">
+                                        <div class="layer-state-title">
+                                            <i class="fa-solid fa-circle-minus"></i>
+                                            Estado Actual (AS-IS)
+                                        </div>
+                                        <ul class="layer-state-list">
+                                            <li>Sistemas de ventas aislados</li>
+                                            <li>Atención manual por WhatsApp</li>
+                                            <li>Reportes manuales Excel</li>
+                                            <li>GPS individual sin centralizar</li>
+                                            <li>Procesos semi-manuales</li>
+                                        </ul>
+                                    </div>
+                                    <div class="layer-state to-be">
+                                        <div class="layer-state-title">
+                                            <i class="fa-solid fa-circle-plus"></i>
+                                            Estado Futuro (TO-BE)
+                                        </div>
+                                        <ul class="layer-state-list">
+                                            <li>API Central de Inventario</li>
+                                            <li>Chatbot WhatsApp con NLP</li>
+                                            <li>Reportes automáticos SUTRAN</li>
+                                            <li>Centro de Control IoT</li>
+                                            <li>Venta omnicanal sincronizada</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Summary Section -->
             <div class="sidebar-section">
                 <div class="section-title">
@@ -680,7 +912,7 @@
             <div class="sidebar-section">
                 <div class="section-title">
                     <i class="fa-solid fa-layer-group"></i>
-                    Capas
+                    Capas de Arquitectura
                 </div>
 
                 <!-- Negocio -->
@@ -857,38 +1089,79 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </aside>
 
-        <!-- Image Container -->
-        <div class="image-container" id="imageContainer">
-            <img src="archi.png" alt="Arquitectura Famisa" class="architecture-image" id="archImage" draggable="false">
-        </div>
+        <!-- Canvas Area -->
+        <main class="canvas-area">
+            <div class="canvas-wrapper">
+                <!-- Toolbar -->
+                <div class="toolbar">
+                    <div class="toolbar-group">
+                        <button class="toolbar-btn" onclick="zoomOut()" title="Alejar">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+                        <div class="zoom-display" id="zoomLevel">100%</div>
+                        <button class="toolbar-btn" onclick="zoomIn()" title="Acercar">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                        <button class="toolbar-btn" onclick="resetZoom()" title="Reiniciar">
+                            <i class="fa-solid fa-rotate-left"></i>
+                        </button>
+                    </div>
+                    <div class="toolbar-group">
+                        <button class="toolbar-btn toolbar-btn-text" onclick="fitToScreen()">
+                            <i class="fa-solid fa-expand"></i>
+                            <span>Ajustar</span>
+                        </button>
+                        <button class="toolbar-btn toolbar-btn-text" onclick="toggleAllLayers()">
+                            <i class="fa-regular fa-square"></i>
+                            <span>Expandir</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="legend-fab" id="legendFab">
+                    <button class="legend-toggle" onclick="toggleLegend()">
+                        <i class="fa-solid fa-palette"></i>
+                        <span>Leyenda</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="legend-panel">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: var(--accent-business);"></div>
+                            <span>Capa de Negocio</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: var(--accent-application);"></div>
+                            <span>Capa de Aplicación</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: var(--accent-technology);"></div>
+                            <span>Capa de Tecnología</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: var(--accent-roadmap);"></div>
+                            <span>Roadmap & Motivación</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image Container -->
+                <div class="image-container" id="imageContainer">
+                    <img src="archi.png" alt="Arquitectura FAMISA" class="architecture-image" id="archImage" draggable="false">
+                </div>
+            </div>
+        </main>
     </div>
 
-    <!-- Floating Legend -->
-    <div class="legend-fab" id="legendFab">
-        <button class="legend-toggle" onclick="toggleLegend()">
-            <i class="fa-solid fa-palette"></i>
-            <span>Leyenda</span>
-            <i class="fa-solid fa-chevron-down"></i>
-        </button>
-        <div class="legend-panel">
-            <div class="legend-item">
-                <div class="legend-color" style="background: var(--accent-business);"></div>
-                <span>Negocio</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: var(--accent-application);"></div>
-                <span>Aplicación</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: var(--accent-technology);"></div>
-                <span>Tecnología</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: var(--accent-roadmap);"></div>
-                <span>Roadmap</span>
-            </div>
+    <!-- Modal for Organigrama -->
+    <div class="modal" id="organigramaModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('organigrama')">
+                <i class="fa-solid fa-times"></i>
+            </button>
+            <img src="organigrama.png" alt="Organigrama FAMISA" class="modal-image">
         </div>
     </div>
 
@@ -899,6 +1172,26 @@
             <span>Vista Inicial</span>
         </button>
     </div>
+
+    <!-- Footer Bar -->
+    <footer class="footer-bar">
+        <div class="footer-left">
+            <div class="footer-item">
+                <i class="fa-solid fa-info-circle"></i>
+                <span>Modelo: Arquitectura Empresarial FAMISA</span>
+            </div>
+            <div class="footer-item">
+                <span>122 elementos</span>
+            </div>
+            <div class="footer-item">
+                <span>96 relaciones</span>
+            </div>
+        </div>
+        <div class="footer-item">
+            <i class="fa-solid fa-calendar"></i>
+            <span>Última actualización: 25/06/2026</span>
+        </div>
+    </footer>
 
     <!-- Notification -->
     <div class="notification" id="notification"></div>
@@ -989,27 +1282,34 @@
         });
 
         function toggleAccordion(name) {
-            const acc = document.getElementById('acc-' + name);
-            const isExpanded = acc.classList.contains('expanded');
+            const acc = document.getElementById(name + '-accordion');
+            if (acc) {
+                const isExpanded = acc.classList.contains('expanded');
+                acc.classList.toggle('expanded', !isExpanded);
+            }
             
-            document.querySelectorAll('.accordion-item').forEach(a => a.classList.remove('expanded'));
-            
-            if (!isExpanded) {
-                acc.classList.add('expanded');
+            // Also handle layer accordions
+            const layerAcc = document.getElementById('acc-' + name);
+            if (layerAcc) {
+                const isExpanded = layerAcc.classList.contains('expanded');
+                document.querySelectorAll('.accordion-item[id^="acc-"]').forEach(a => a.classList.remove('expanded'));
+                if (!isExpanded) {
+                    layerAcc.classList.add('expanded');
+                }
             }
         }
 
         function toggleAllLayers() {
-            const allExpanded = document.querySelectorAll('.accordion-item.expanded').length === 4;
+            const allExpanded = document.querySelectorAll('.accordion-item[id^="acc-"].expanded').length === 4;
             
-            document.querySelectorAll('.accordion-item').forEach((acc, index) => {
+            document.querySelectorAll('.accordion-item[id^="acc-"]').forEach((acc, index) => {
                 setTimeout(() => {
                     if (allExpanded) {
                         acc.classList.remove('expanded');
                     } else {
                         acc.classList.add('expanded');
                     }
-                }, index * 60);
+                }, index * 80);
             });
             
             showNotification(allExpanded ? 'Capas colapsadas' : 'Capas expandidas');
@@ -1019,10 +1319,22 @@
             document.getElementById('legendFab').classList.toggle('open');
         }
 
+        function openModal(type) {
+            if (type === 'organigrama') {
+                document.getElementById('organigramaModal').classList.add('active');
+            }
+        }
+
+        function closeModal(type) {
+            if (type === 'organigrama') {
+                document.getElementById('organigramaModal').classList.remove('active');
+            }
+        }
+
         function showNotification(message) {
             notification.textContent = message;
             notification.classList.add('show');
-            setTimeout(() => notification.classList.remove('show'), 2000);
+            setTimeout(() => notification.classList.remove('show'), 2500);
         }
 
         function resetView() {
@@ -1035,7 +1347,19 @@
             if (e.key === '-') zoomOut();
             if (e.key === '0') resetZoom();
             if (e.key === 'f' || e.key === 'F') fitToScreen();
-            if (e.key === 'Escape') resetView();
+            if (e.key === 'Escape') {
+                resetView();
+                closeModal('organigrama');
+            }
+        });
+
+        // Close modal when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
         });
 
         let initialPinchDistance = null;
@@ -1075,7 +1399,6 @@
             initialPinchDistance = null;
         });
 
-        // Close legend when clicking outside
         document.addEventListener('click', function(e) {
             const legendFab = document.getElementById('legendFab');
             if (!legendFab.contains(e.target)) {
