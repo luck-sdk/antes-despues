@@ -3,708 +3,537 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analizador de Alcohol en Aire · Sistema BAC</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <title>Arquitectura Famisa - Vista Interactiva ArchiMate</title>
     <style>
-        /* ===== RESET & BASE ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            background: #f1f5f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 24px;
+            overflow: hidden;
         }
 
-        /* ===== TARJETA PRINCIPAL ===== */
-        .dashboard {
-            max-width: 1200px;
-            width: 100%;
-            background: #ffffff;
-            border-radius: 20px;
-            padding: 32px 36px 28px;
-            box-shadow: 0 20px 60px -12px rgba(0, 20, 40, 0.25);
-            border: 1px solid #e9edf2;
-            transition: all 0.2s ease;
+        .container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* ===== ENCABEZADO ===== */
         .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.2);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            margin-bottom: 28px;
-            padding-bottom: 18px;
-            border-bottom: 2px solid #eef2f6;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .logo-icon {
-            width: 42px;
-            height: 42px;
-            background: #0b2b44;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            font-size: 18px;
-            letter-spacing: -0.5px;
+            gap: 15px;
         }
 
         .header h1 {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: #0b2b44;
-            letter-spacing: -0.3px;
+            color: #1e3c72;
+            font-size: 24px;
         }
 
-        .header h1 span {
-            font-weight: 300;
-            color: #4a6f8c;
-            font-size: 1rem;
-            margin-left: 8px;
-        }
-
-        .header-right {
+        .controls {
             display: flex;
-            align-items: center;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .api-status {
-            font-size: 0.8rem;
-            background: #eef2f6;
-            padding: 6px 16px;
-            border-radius: 30px;
-            color: #1f4a6b;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .api-status .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .api-status .dot.success { background: #1f8b4c; }
-        .api-status .dot.loading { background: #d4a02b; }
-        .api-status .dot.error { background: #c73a3a; }
-        .api-status .dot.info { background: #2a7bb0; }
-
-        .user-badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #f1f5f9;
-            padding: 6px 16px 6px 12px;
-            border-radius: 30px;
-            font-size: 0.9rem;
-            color: #1f3f5a;
-            font-weight: 500;
-        }
-
-        .user-badge .number {
-            font-weight: 700;
-            color: #0b2b44;
-            font-size: 1.1rem;
-        }
-
-        /* ===== ÁREA DE ENTRADA ===== */
-        .input-section {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: flex-end;
-            gap: 16px 20px;
-            background: #f8fafc;
-            padding: 20px 24px;
-            border-radius: 16px;
-            margin-bottom: 32px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .input-group {
-            flex: 2 1 220px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .input-group label {
-            font-weight: 600;
-            font-size: 0.8rem;
-            color: #2c4b66;
-            letter-spacing: 0.3px;
-            text-transform: uppercase;
-        }
-
-        .input-group input {
-            background: white;
-            border: 1px solid #d5dee8;
-            padding: 12px 18px;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 500;
-            color: #0a263b;
-            transition: 0.2s;
-            width: 100%;
-        }
-
-        .input-group input:focus {
-            outline: none;
-            border-color: #1d5b85;
-            box-shadow: 0 0 0 3px rgba(29, 91, 133, 0.15);
-        }
-
-        .input-group .hint {
-            font-size: 0.7rem;
-            color: #6a7f94;
-            margin-top: 2px;
-        }
-
-        .btn-group {
-            display: flex;
-            flex: 1 0 auto;
             gap: 10px;
             align-items: center;
             flex-wrap: wrap;
         }
 
-        .btn {
-            border: none;
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: 0.15s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            flex: 1 0 auto;
-            white-space: nowrap;
-        }
-
-        .btn-primary {
-            background: #1d5b85;
-            color: white;
-            box-shadow: 0 4px 12px rgba(29, 91, 133, 0.25);
-        }
-        .btn-primary:hover {
-            background: #134a70;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(29, 91, 133, 0.3);
-        }
-
-        .btn-secondary {
-            background: #e8edf3;
-            color: #1f405a;
-        }
-        .btn-secondary:hover {
-            background: #d5dde8;
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: #2c4b66;
-            border: 1px solid #cbd7e5;
-        }
-        .btn-outline:hover {
-            background: #f1f5f9;
-            border-color: #a0b4c9;
-        }
-
-        /* ===== ESTADÍSTICAS ===== */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 16px;
-            margin-bottom: 32px;
-        }
-
-        .stat-card {
-            background: #f8fafc;
-            padding: 16px 12px 14px;
-            border-radius: 14px;
-            text-align: center;
-            border: 1px solid #e9edf2;
-            transition: 0.15s;
-        }
-        .stat-card:hover {
-            border-color: #cbd7e5;
-        }
-
-        .stat-card .label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #5a738b;
-            font-weight: 600;
-        }
-
-        .stat-card .value {
-            font-size: 1.9rem;
-            font-weight: 700;
-            color: #0b2b44;
-            line-height: 1.3;
-            margin-top: 2px;
-        }
-
-        .stat-card .value small {
-            font-size: 0.9rem;
-            font-weight: 400;
-            color: #4a6f8c;
-            margin-left: 2px;
-        }
-
-        /* ===== GRÁFICAS ===== */
-        .charts-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-top: 8px;
-        }
-
-        .chart-box {
-            background: #fafcfe;
-            border-radius: 16px;
-            padding: 18px 16px 14px;
-            border: 1px solid #e9edf2;
-        }
-
-        .chart-box .chart-title {
-            font-weight: 500;
-            color: #1f405a;
-            font-size: 0.85rem;
-            text-align: center;
-            margin-bottom: 12px;
-            letter-spacing: 0.2px;
-        }
-
-        .chart-wrapper {
-            position: relative;
-            height: 190px;
-        }
-
-        /* ===== FOOTER ===== */
-        .footer {
+        .zoom-controls {
             display: flex;
-            justify-content: space-between;
+            gap: 5px;
             align-items: center;
-            margin-top: 24px;
-            padding-top: 16px;
-            border-top: 1px solid #eef2f6;
-            font-size: 0.75rem;
-            color: #6a7f94;
-            flex-wrap: wrap;
+            background: #f0f4f8;
+            padding: 5px;
+            border-radius: 6px;
+        }
+
+        .zoom-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 4px;
+            background: white;
+            color: #1e3c72;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .zoom-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .zoom-level {
+            padding: 0 15px;
+            font-weight: 600;
+            color: #1e3c72;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .layer-filters {
+            display: flex;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
-        .footer .conversion-note {
-            background: #f1f5f9;
-            padding: 4px 14px;
+        .layer-filter {
+            padding: 8px 16px;
+            border: 2px solid #667eea;
             border-radius: 20px;
+            background: white;
+            color: #667eea;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
         }
 
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 800px) {
-            .dashboard { padding: 20px; }
-            .charts-grid { grid-template-columns: 1fr; }
-            .stats-grid { grid-template-columns: 1fr 1fr; }
-            .header h1 { font-size: 1.4rem; }
-            .header h1 span { font-size: 0.85rem; display: block; margin-left: 0; }
+        .layer-filter:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
         }
 
-        @media (max-width: 500px) {
-            .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-            .btn-group .btn { flex: 1 1 100%; }
-            .input-section { padding: 16px; }
+        .layer-filter.active {
+            background: #667eea;
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .layer-filter.business { border-color: #e74c3c; color: #e74c3c; }
+        .layer-filter.business:hover, .layer-filter.business.active { background: #e74c3c; color: white; }
+        
+        .layer-filter.application { border-color: #3498db; color: #3498db; }
+        .layer-filter.application:hover, .layer-filter.application.active { background: #3498db; color: white; }
+        
+        .layer-filter.technology { border-color: #27ae60; color: #27ae60; }
+        .layer-filter.technology:hover, .layer-filter.technology.active { background: #27ae60; color: white; }
+        
+        .layer-filter.motivation { border-color: #9b59b6; color: #9b59b6; }
+        .layer-filter.motivation:hover, .layer-filter.motivation.active { background: #9b59b6; color: white; }
+
+        .image-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: grab;
+            overflow: hidden;
+            padding-top: 80px;
+        }
+
+        .image-container.grabbing {
+            cursor: grabbing;
+        }
+
+        .architecture-image {
+            max-width: none;
+            transition: transform 0.1s ease;
+            transform-origin: center center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            border-radius: 8px;
+        }
+
+        .info-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            max-width: 350px;
+        }
+
+        .info-panel h3 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .layer-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .layer-item {
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .layer-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .layer-business { background: #fef3c7; color: #92400e; border: 2px solid #e74c3c; }
+        .layer-application { background: #dbeafe; color: #1e40af; border: 2px solid #3498db; }
+        .layer-technology { background: #d1fae5; color: #065f46; border: 2px solid #27ae60; }
+        .layer-motivation { background: #fce7f3; color: #9d174d; border: 2px solid #9b59b6; }
+
+        .info-panel p {
+            color: #666;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .reset-view {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .legend {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-size: 12px;
+        }
+
+        .legend h4 {
+            color: #1e3c72;
+            margin-bottom: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 10px 15px;
+            }
+            .header h1 {
+                font-size: 18px;
+            }
+            .layer-filters {
+                width: 100%;
+                justify-content: center;
+            }
+            .info-panel {
+                max-width: 250px;
+                padding: 15px;
+            }
         }
     </style>
 </head>
 <body>
-
-<div class="dashboard">
-
-    <!-- ===== HEADER ===== -->
-    <header class="header">
-        <div class="header-left">
-            <div class="logo-icon">BAC</div>
-            <h1>Analizador de Alcohol <span>· Sistema de Monitoreo</span></h1>
-        </div>
-        <div class="header-right">
-            <div class="api-status" id="apiStatus">
-                <span class="dot loading" id="statusDot"></span>
-                <span id="statusText">Cargando...</span>
-            </div>
-            <div class="user-badge">
-                <span>Usuarios</span>
-                <span class="number" id="userCountDisplay">0</span>
-            </div>
-        </div>
-    </header>
-
-    <!-- ===== INPUT ===== -->
-    <section class="input-section">
-        <div class="input-group">
-            <label for="mgInput">Concentración (mg/L)</label>
-            <input type="number" id="mgInput" placeholder="Ejemplo: 0.50" step="0.01" min="0" value="0.42">
-            <span class="hint">Ingrese el valor de alcohol en aire</span>
-        </div>
-        <div class="btn-group">
-            <button class="btn btn-primary" id="analyzeBtn">Agregar medición</button>
-            <button class="btn btn-secondary" id="refreshApiBtn">Recargar API</button>
-            <button class="btn btn-outline" id="resetBtn">Reiniciar</button>
-        </div>
-    </section>
-
-    <!-- ===== STATS ===== -->
-    <section class="stats-grid">
-        <div class="stat-card">
-            <div class="label">BAC actual</div>
-            <div class="value" id="bacDisplay">0.00<small>%</small></div>
-        </div>
-        <div class="stat-card">
-            <div class="label">Última medición</div>
-            <div class="value" id="lastMgDisplay">0.00<small> mg/L</small></div>
-        </div>
-        <div class="stat-card">
-            <div class="label">Total registros</div>
-            <div class="value" id="totalUsersDisplay">0</div>
-        </div>
-        <div class="stat-card">
-            <div class="label">Promedio</div>
-            <div class="value" id="avgMgDisplay">0.00<small> mg/L</small></div>
-        </div>
-    </section>
-
-    <!-- ===== CHARTS ===== -->
-    <section class="charts-grid">
-        <div class="chart-box">
-            <div class="chart-title">Historial de concentración (%BAC)</div>
-            <div class="chart-wrapper">
-                <canvas id="historyChart"></canvas>
+    <div class="container">
+        <div class="header">
+            <h1>🏛️ Arquitectura Famisa - Venta Omnicanal</h1>
+            <div class="controls">
+                <div class="zoom-controls">
+                    <button class="zoom-btn" onclick="zoomOut()" title="Alejar">−</button>
+                    <span class="zoom-level" id="zoomLevel">100%</span>
+                    <button class="zoom-btn" onclick="zoomIn()" title="Acercar">+</button>
+                    <button class="zoom-btn" onclick="resetZoom()" title="Reset">⟲</button>
+                </div>
+                <div class="layer-filters">
+                    <button class="layer-filter active" onclick="filterLayer('all', this)">Todas</button>
+                    <button class="layer-filter business" onclick="filterLayer('business', this)">Negocio</button>
+                    <button class="layer-filter application" onclick="filterLayer('application', this)">Aplicación</button>
+                    <button class="layer-filter technology" onclick="filterLayer('technology', this)">Tecnología</button>
+                    <button class="layer-filter motivation" onclick="filterLayer('motivation', this)">Roadmap</button>
+                </div>
+                <button class="btn" onclick="fitToScreen()">Ajustar</button>
             </div>
         </div>
-        <div class="chart-box">
-            <div class="chart-title">Distribución de usuarios por mg/L</div>
-            <div class="chart-wrapper">
-                <canvas id="distChart"></canvas>
+
+        <div class="legend">
+            <h4>📊 Capas ArchiMate</h4>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #e74c3c;"></div>
+                <span>Capa de Negocio</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #3498db;"></div>
+                <span>Capa de Aplicación</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #27ae60;"></div>
+                <span>Capa de Tecnología</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #9b59b6;"></div>
+                <span>Roadmap (AS-IS → TO-BE)</span>
             </div>
         </div>
-    </section>
 
-    <!-- ===== FOOTER ===== -->
-    <footer class="footer">
-        <span>Datos obtenidos desde <strong>/mediciones</strong></span>
-        <span class="conversion-note">Factor de conversión: 1 mg/L = 0.0001 %BAC</span>
-    </footer>
+        <div class="image-container" id="imageContainer">
+            <img src="archi.png" alt="Arquitectura Famisa - ArchiMate" class="architecture-image" id="archImage" draggable="false">
+        </div>
 
-</div>
+        <div class="info-panel">
+            <h3>📋 Elementos por Capa</h3>
+            <div class="layer-info">
+                <div class="layer-item layer-business" onclick="highlightLayer('business')">
+                    Negocio<br><small>5 Actores, 7 Procesos</small>
+                </div>
+                <div class="layer-item layer-application" onclick="highlightLayer('application')">
+                    Aplicación<br><small>12 Servicios</small>
+                </div>
+                <div class="layer-item layer-technology" onclick="highlightLayer('technology')">
+                    Tecnología<br><small>10 Componentes</small>
+                </div>
+                <div class="layer-item layer-motivation" onclick="highlightLayer('motivation')">
+                    Roadmap<br><small>3 Fases</small>
+                </div>
+            </div>
+            <p style="margin-top: 10px; font-size: 11px;">
+                💡 <strong>Instrucciones:</strong><br>
+                • Arrastra para mover<br>
+                • Rueda del mouse para zoom<br>
+                • Click en capas para filtrar<br>
+                • Doble clic para resetear
+            </p>
+        </div>
 
-<script>
-    (function() {
-        'use strict';
+        <div class="reset-view">
+            <button class="btn" onclick="resetView()">🔄 Vista Inicial</button>
+        </div>
+    </div>
 
-        // ===== CONFIGURACIÓN =====
-        const API_URL = 'https://rtx-f3c9drecaxede7cc.brazilsouth-01.azurewebsites.net/mediciones';
-        const MG_TO_BAC = 0.0001;
+    <script>
+        let scale = 1;
+        let panning = false;
+        let pointX = 0;
+        let pointY = 0;
+        let startX = 0;
+        let startY = 0;
+        const container = document.getElementById('imageContainer');
+        const img = document.getElementById('archImage');
+        const zoomLevelDisplay = document.getElementById('zoomLevel');
 
-        // ===== ESTADO =====
-        let records = []; // { mg, bac }
-
-        // ===== DOM REFERENCIAS =====
-        const mgInput = document.getElementById('mgInput');
-        const analyzeBtn = document.getElementById('analyzeBtn');
-        const resetBtn = document.getElementById('resetBtn');
-        const refreshApiBtn = document.getElementById('refreshApiBtn');
-        const apiStatus = document.getElementById('apiStatus');
-        const statusDot = document.getElementById('statusDot');
-        const statusText = document.getElementById('statusText');
-
-        const bacDisplay = document.getElementById('bacDisplay');
-        const lastMgDisplay = document.getElementById('lastMgDisplay');
-        const totalUsersDisplay = document.getElementById('totalUsersDisplay');
-        const avgMgDisplay = document.getElementById('avgMgDisplay');
-        const userCountDisplay = document.getElementById('userCountDisplay');
-
-        const ctxHistory = document.getElementById('historyChart').getContext('2d');
-        const ctxDist = document.getElementById('distChart').getContext('2d');
-
-        let historyChart = null;
-        let distChart = null;
-
-        // ===== FUNCIONES AUXILIARES =====
-        function mgToBac(mg) {
-            return mg * MG_TO_BAC;
+        function zoomIn() {
+            scale *= 1.2;
+            updateTransform();
         }
 
-        function setStatus(type, message) {
-            const dot = statusDot;
-            dot.className = 'dot';
-            if (type === 'success') {
-                dot.classList.add('success');
-                apiStatus.style.borderColor = '#1f8b4c';
-            } else if (type === 'loading') {
-                dot.classList.add('loading');
-                apiStatus.style.borderColor = '#d4a02b';
-            } else if (type === 'error') {
-                dot.classList.add('error');
-                apiStatus.style.borderColor = '#c73a3a';
-            } else {
-                dot.classList.add('info');
-                apiStatus.style.borderColor = '#2a7bb0';
-            }
-            statusText.textContent = message;
+        function zoomOut() {
+            scale *= 0.8;
+            updateTransform();
         }
 
-        // ===== ACTUALIZAR DASHBOARD =====
-        function updateDashboard() {
-            const total = records.length;
-            let lastMg = total > 0 ? records[records.length - 1].mg : 0;
-            let lastBac = total > 0 ? records[records.length - 1].bac : 0;
-            let sumMg = records.reduce((acc, r) => acc + r.mg, 0);
-            let avgMg = total > 0 ? sumMg / total : 0;
-
-            bacDisplay.innerHTML = `${(lastBac * 100).toFixed(3)}<small>%</small>`;
-            lastMgDisplay.innerHTML = `${lastMg.toFixed(3)}<small> mg/L</small>`;
-            totalUsersDisplay.textContent = total;
-            avgMgDisplay.innerHTML = `${avgMg.toFixed(3)}<small> mg/L</small>`;
-            userCountDisplay.textContent = total;
-
-            updateHistoryChart();
-            updateDistChart();
+        function resetZoom() {
+            scale = 1;
+            pointX = 0;
+            pointY = 0;
+            updateTransform();
         }
 
-        // ===== GRÁFICAS =====
-        function updateHistoryChart() {
-            const labels = records.map((_, idx) => `#${idx + 1}`);
-            const dataBac = records.map(r => parseFloat((r.bac * 100).toFixed(4)));
-
-            if (historyChart) {
-                historyChart.data.labels = labels;
-                historyChart.data.datasets[0].data = dataBac;
-                historyChart.update();
-            } else {
-                historyChart = new Chart(ctxHistory, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: '%BAC',
-                            data: dataBac,
-                            borderColor: '#1d6b9e',
-                            backgroundColor: 'rgba(29, 107, 158, 0.06)',
-                            borderWidth: 2.5,
-                            pointBackgroundColor: '#0f4b73',
-                            pointBorderColor: 'white',
-                            pointBorderWidth: 1.5,
-                            tension: 0.2,
-                            fill: true,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(ctx) {
-                                        return ctx.parsed.y.toFixed(3) + ' %';
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: { color: 'rgba(0,0,0,0.04)' },
-                                ticks: { callback: function(val) { return val.toFixed(2) + '%'; } }
-                            },
-                            x: {
-                                grid: { display: false },
-                                ticks: { maxTicksLimit: 12, font: { size: 9 } }
-                            }
-                        }
-                    }
-                });
-            }
+        function fitToScreen() {
+            const containerRect = container.getBoundingClientRect();
+            const imgWidth = img.naturalWidth || img.width;
+            const imgHeight = img.naturalHeight || img.height;
+            
+            const scaleX = (containerRect.width - 40) / imgWidth;
+            const scaleY = (containerRect.height - 40) / imgHeight;
+            scale = Math.min(scaleX, scaleY, 1);
+            
+            pointX = 0;
+            pointY = 0;
+            updateTransform();
         }
 
-        function updateDistChart() {
-            const bucketMap = new Map();
-            records.forEach(r => {
-                const key = Math.round(r.mg * 100) / 100;
-                bucketMap.set(key, (bucketMap.get(key) || 0) + 1);
-            });
-            const sortedKeys = Array.from(bucketMap.keys()).sort((a, b) => a - b);
-            const labels = sortedKeys.map(k => k.toFixed(2));
-            const counts = sortedKeys.map(k => bucketMap.get(k));
-
-            if (distChart) {
-                distChart.data.labels = labels;
-                distChart.data.datasets[0].data = counts;
-                distChart.update();
-            } else {
-                distChart = new Chart(ctxDist, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Usuarios',
-                            data: counts,
-                            backgroundColor: 'rgba(29, 107, 158, 0.5)',
-                            borderColor: '#1d6b9e',
-                            borderWidth: 1.5,
-                            borderRadius: 4,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(ctx) {
-                                        return ctx.parsed.y + ' usuario' + (ctx.parsed.y !== 1 ? 's' : '');
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: { color: 'rgba(0,0,0,0.04)' },
-                                ticks: { stepSize: 1 }
-                            },
-                            x: {
-                                grid: { display: false },
-                                ticks: { maxTicksLimit: 12, font: { size: 9 } }
-                            }
-                        }
-                    }
-                });
-            }
+        function updateTransform() {
+            zoomLevelDisplay.textContent = Math.round(scale * 100) + '%';
+            img.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
         }
 
-        // ===== CARGAR DESDE API =====
-        async function loadFromApi() {
-            setStatus('loading', 'Cargando datos...');
-            try {
-                const response = await fetch(API_URL);
-                if (!response.ok) throw new Error('Error HTTP: ' + response.status);
-                const data = await response.json();
-
-                if (!Array.isArray(data) || data.length === 0) {
-                    setStatus('info', 'Sin datos disponibles');
-                    if (records.length === 0) loadDemoData();
-                    return;
-                }
-
-                const newRecords = data
-                    .map(item => {
-                        const mg = parseFloat(item.alcohol);
-                        if (isNaN(mg) || mg < 0) return null;
-                        return { mg: mg, bac: mgToBac(mg) };
-                    })
-                    .filter(r => r !== null);
-
-                if (newRecords.length === 0) {
-                    setStatus('info', 'Datos inválidos');
-                    if (records.length === 0) loadDemoData();
-                    return;
-                }
-
-                records = newRecords;
-                updateDashboard();
-                setStatus('success', records.length + ' registros cargados');
-            } catch (error) {
-                console.error('Error al cargar API:', error);
-                setStatus('error', 'Error de conexión');
-                if (records.length === 0) loadDemoData();
-            }
-        }
-
-        // ===== DATOS DE DEMO (FALLBACK) =====
-        function loadDemoData() {
-            const demoData = [0.32, 0.45, 0.28, 0.60, 0.38, 0.72, 0.15, 0.50, 0.41, 0.33, 0.55, 0.22];
-            records = demoData.map(val => {
-                const mgRounded = Math.round(val * 1000) / 1000;
-                return { mg: mgRounded, bac: mgToBac(mgRounded) };
-            });
-            updateDashboard();
-            setStatus('info', 'Datos de ejemplo');
-        }
-
-        // ===== AGREGAR REGISTRO LOCAL =====
-        function addRecord(mg) {
-            if (isNaN(mg) || mg < 0) {
-                alert('Ingrese un valor numérico válido (mg/L ≥ 0)');
-                return false;
-            }
-            const mgRounded = Math.round(mg * 1000) / 1000;
-            records.push({ mg: mgRounded, bac: mgToBac(mgRounded) });
-            updateDashboard();
-            setStatus('success', 'Medición agregada localmente');
-            return true;
-        }
-
-        function resetData() {
-            if (records.length === 0) return;
-            if (confirm('¿Eliminar todos los registros locales?')) {
-                records = [];
-                updateDashboard();
-                mgInput.value = '';
-                setStatus('info', 'Datos reiniciados');
-            }
-        }
-
-        // ===== EVENTOS =====
-        analyzeBtn.addEventListener('click', function() {
-            const raw = mgInput.value.trim();
-            if (raw === '') { alert('Ingrese un valor de mg/L'); return; }
-            const mg = parseFloat(raw);
-            if (isNaN(mg) || mg < 0) { alert('Valor inválido. Use un número positivo.'); return; }
-            addRecord(mg);
-            mgInput.value = '';
-            mgInput.focus();
+        container.addEventListener('mousedown', function(e) {
+            e.preventDefault();
+            panning = true;
+            startX = e.clientX - pointX;
+            startY = e.clientY - pointY;
+            container.classList.add('grabbing');
         });
 
-        refreshApiBtn.addEventListener('click', loadFromApi);
-        resetBtn.addEventListener('click', resetData);
+        window.addEventListener('mousemove', function(e) {
+            if (!panning) return;
+            e.preventDefault();
+            pointX = e.clientX - startX;
+            pointY = e.clientY - startY;
+            updateTransform();
+        });
 
-        mgInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                analyzeBtn.click();
-                e.preventDefault();
+        window.addEventListener('mouseup', function() {
+            panning = false;
+            container.classList.remove('grabbing');
+        });
+
+        container.addEventListener('wheel', function(e) {
+            e.preventDefault();
+            if (e.deltaY < 0) {
+                scale *= 1.1;
+            } else {
+                scale *= 0.9;
+            }
+            updateTransform();
+        });
+
+        container.addEventListener('dblclick', function() {
+            resetZoom();
+        });
+
+        function filterLayer(layer, btn) {
+            document.querySelectorAll('.layer-filter').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const opacity = layer === 'all' ? 1 : 0.3;
+            img.style.opacity = opacity;
+            
+            showNotification(`Filtrando: ${layer === 'all' ? 'Todas las capas' : 'Capa ' + layer}`);
+        }
+
+        function highlightLayer(layer) {
+            showNotification(`Capa ${layer}: Haz zoom para ver detalles`);
+            resetZoom();
+            setTimeout(() => {
+                scale = 1.5;
+                updateTransform();
+            }, 300);
+        }
+
+        function showNotification(message) {
+            const notif = document.createElement('div');
+            notif.style.cssText = `
+                position: fixed;
+                top: 100px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(30, 60, 114, 0.9);
+                color: white;
+                padding: 12px 24px;
+                border-radius: 8px;
+                z-index: 2000;
+                font-weight: 600;
+                animation: slideDown 0.3s ease;
+            `;
+            notif.textContent = message;
+            document.body.appendChild(notif);
+            setTimeout(() => {
+                notif.remove();
+            }, 2000);
+        }
+
+        function resetView() {
+            resetZoom();
+            setTimeout(() => {
+                fitToScreen();
+            }, 100);
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === '+' || e.key === '=') zoomIn();
+            if (e.key === '-') zoomOut();
+            if (e.key === '0') resetZoom();
+            if (e.key === 'f' || e.key === 'F') fitToScreen();
+        });
+
+        let initialPinchDistance = null;
+
+        container.addEventListener('touchstart', function(e) {
+            if (e.touches.length === 2) {
+                initialPinchDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+            } else if (e.touches.length === 1) {
+                panning = true;
+                startX = e.touches[0].clientX - pointX;
+                startY = e.touches[0].clientY - pointY;
             }
         });
 
-        // ===== INICIALIZACIÓN =====
-        loadFromApi();
-    })();
-</script>
+        container.addEventListener('touchmove', function(e) {
+            if (e.touches.length === 2 && initialPinchDistance) {
+                const currentDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                const factor = currentDistance / initialPinchDistance;
+                scale *= factor;
+                initialPinchDistance = currentDistance;
+                updateTransform();
+            } else if (e.touches.length === 1 && panning) {
+                pointX = e.touches[0].clientX - startX;
+                pointY = e.touches[0].clientY - startY;
+                updateTransform();
+            }
+        });
+
+        container.addEventListener('touchend', function() {
+            panning = false;
+            initialPinchDistance = null;
+        });
+
+        window.addEventListener('load', function() {
+            setTimeout(fitToScreen, 500);
+        });
+    </script>
 </body>
 </html>
