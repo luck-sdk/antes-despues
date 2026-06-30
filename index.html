@@ -51,7 +51,7 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 56px;
+            height: 64px;
             background: var(--bg-sidebar);
             border-bottom: 1px solid var(--border-subtle);
             display: flex;
@@ -67,17 +67,17 @@
             gap: 16px;
         }
 
-        .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--accent-application), var(--accent-roadmap));
-            border-radius: 8px;
+        .logo-container {
             display: flex;
             align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            font-size: 14px;
+            padding: 4px 0;
+        }
+
+        .logo-img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+            display: block;
         }
 
         .header-title {
@@ -113,7 +113,7 @@
         /* Toolbar */
         .toolbar {
             position: fixed;
-            top: 72px;
+            top: 80px;
             left: 50%;
             transform: translateX(-50%);
             background: var(--bg-sidebar);
@@ -184,7 +184,7 @@
         .main-layout {
             display: flex;
             height: 100vh;
-            padding-top: 56px;
+            padding-top: 64px;
         }
 
         /* Sidebar */
@@ -411,7 +411,7 @@
         /* Floating Legend Button */
         .legend-fab {
             position: fixed;
-            top: 140px;
+            top: 148px;
             right: 24px;
             z-index: 1000;
         }
@@ -557,7 +557,7 @@
         /* Notification */
         .notification {
             position: fixed;
-            top: 140px;
+            top: 148px;
             left: 50%;
             transform: translateX(-50%) translateY(-20px);
             background: var(--bg-sidebar);
@@ -608,7 +608,9 @@
     <!-- Header -->
     <div class="header">
         <div class="header-left">
-            <div class="logo-icon">F</div>
+            <div class="logo-container">
+                <img src="https://www.famisa.pe/wp-content/uploads/2025/09/logo-famisa-empresa-de-transportes.webp" alt="Famisa Logo" class="logo-img">
+            </div>
             <div>
                 <div class="header-title">Diagrama — Empresa de Transportes Famisa</div>
                 <div class="header-subtitle">Arquitectura Empresarial · Venta Omnicanal de Pasajes</div>
